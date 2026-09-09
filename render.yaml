@@ -5,15 +5,21 @@ services:
     name: solvia
     runtime: node
 
-    # ATTENZIONE — questo NON può essere "free".
-    # Il piano gratuito di Render non ammette dischi persistenti: senza disco, il
-    # database sta su un filesystem che si azzera a ogni riavvio, a ogni nuovo
-    # deploy e dopo ogni sospensione per inattività. Account, clienti e fatture
-    # sparirebbero senza un errore, il che è molto peggio di un deploy fallito.
-    # "starter" è il piano più economico che permette il disco. Se vuoi provare a
-    # costo zero, togli TUTTA la sezione "disk" qui sotto e metti plan: free —
-    # sapendo che ogni riavvio riparte da un database vuoto.
-    plan: starter
+    # ─── PIANO GRATUITO ───
+    # "free" non chiede la carta di credito, ma NON ha un disco: il database
+    # vive su uno spazio che si azzera a ogni riavvio, a ogni pubblicazione e
+    # dopo ogni sonnellino per inattività. Da solo, sparirebbe tutto in silenzio.
+    #
+    # Per questo qui sotto vanno riempite SOLVIA_BACKUP_REPO e
+    # SOLVIA_BACKUP_TOKEN: con quelle, Solvia riscarica il database all'avvio e
+    # lo risalva ogni pochi minuti su un tuo repository GitHub privato.
+    # Senza quelle due variabili, il piano free perde i dati.
+    #
+    # ─── QUANDO CI SARANNO PERSONE VERE ───
+    # Passa a "starter" (circa 7 $/mese) e togli il commento alla sezione "disk"
+    # in fondo a questo file: disco vero, niente sonnellini, niente trucchi.
+    # Il piano si cambia anche dal pannello di Render, alla voce Instance Type.
+    plan: free
     # "build:pages" rigenera privacy, cookie e termini con i tuoi dati (le
     # variabili SOLVIA_TITOLARE e compagnia qui sotto): così le pagine legali
     # sono aggiornate a ogni deploy senza toccare il codice.
@@ -25,8 +31,11 @@ services:
         value: production
       - key: SOLVIA_SECRET
         generateValue: true      # Render genera un segreto casuale e lo mantiene
+      # Con il piano free non c'è disco: i dati stanno in una cartella dentro il
+      # progetto, che si azzera a ogni riavvio — ed è il salvataggio automatico a
+      # rimetterli a posto. Passando a "starter" con il disco, rimetti /var/data.
       - key: SOLVIA_DATA_DIR
-        value: /var/data
+        value: ./data
       # Progetto gratuito: nessun prezzo esposto, nessun piano da comprare,
       # nessun pagamento da incassare — e quindi nessun obbligo fiscale da
       # rispettare. Al posto del listino il sito mostra la domanda "quanto
@@ -45,6 +54,14 @@ services:
         sync: false
       - key: SOLVIA_HOSTING
         value: Render
+      # Salvataggio automatico del database. Serve SOLO se scegli il piano
+      # gratuito (che non ha disco): il database viene riscaricato all'avvio e
+      # ricaricato ogni pochi minuti su un tuo repository GitHub privato.
+      # Sul piano starter, con il disco qui sotto, lascia pure vuoto.
+      - key: SOLVIA_BACKUP_REPO
+        sync: false
+      - key: SOLVIA_BACKUP_TOKEN
+        sync: false
       # Sostegno volontario ("offrimi un caffè"). Lasciali vuoti e sul sito non
       # compare niente. Per accenderlo servono ENTRAMBI: l'indirizzo del profilo
       # su una piattaforma riconosciuta e il nome di chi riceve davvero i soldi.
@@ -73,9 +90,108 @@ services:
         sync: false
       - key: STRIPE_PRICE_TEAM
         sync: false
-    # Disco persistente: è ciò che tiene in vita il database fra un deploy e l'altro.
-    # Richiede un piano a pagamento (vedi la nota su "plan" più sopra).
-    disk:
-      name: solvia-data
-      mountPath: /var/data
-      sizeGB: 1
+    # Disco persistente: tiene in vita il database fra una pubblicazione e
+    # l'altra, e rende inutile il salvataggio su GitHub. Richiede plan: starter.
+    # Per accenderlo: metti "starter" sopra e togli il cancelletto a queste righe.
+    # disk:
+    #   name: solvia-data
+    #   mountPath: /var/data
+    #   sizeGB: 1# Configurazione per Render (render.com).
+# New → Blueprint → seleziona il repository: Render legge questo file e configura tutto.
+services:
+  - type: web
+    name: solvia
+    runtime: node
+
+    # ─── PIANO GRATUITO ───
+    # "free" non chiede la carta di credito, ma NON ha un disco: il database
+    # vive su uno spazio che si azzera a ogni riavvio, a ogni pubblicazione e
+    # dopo ogni sonnellino per inattività. Da solo, sparirebbe tutto in silenzio.
+    #
+    # Per questo qui sotto vanno riempite SOLVIA_BACKUP_REPO e
+    # SOLVIA_BACKUP_TOKEN: con quelle, Solvia riscarica il database all'avvio e
+    # lo risalva ogni pochi minuti su un tuo repository GitHub privato.
+    # Senza quelle due variabili, il piano free perde i dati.
+    #
+    # ─── QUANDO CI SARANNO PERSONE VERE ───
+    # Passa a "starter" (circa 7 $/mese) e togli il commento alla sezione "disk"
+    # in fondo a questo file: disco vero, niente sonnellini, niente trucchi.
+    # Il piano si cambia anche dal pannello di Render, alla voce Instance Type.
+    plan: free
+    # "build:pages" rigenera privacy, cookie e termini con i tuoi dati (le
+    # variabili SOLVIA_TITOLARE e compagnia qui sotto): così le pagine legali
+    # sono aggiornate a ogni deploy senza toccare il codice.
+    buildCommand: npm ci && npm run build:pages
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SOLVIA_SECRET
+        generateValue: true      # Render genera un segreto casuale e lo mantiene
+      # Con il piano free non c'è disco: i dati stanno in una cartella dentro il
+      # progetto, che si azzera a ogni riavvio — ed è il salvataggio automatico a
+      # rimetterli a posto. Passando a "starter" con il disco, rimetti /var/data.
+      - key: SOLVIA_DATA_DIR
+        value: ./data
+      # Progetto gratuito: nessun prezzo esposto, nessun piano da comprare,
+      # nessun pagamento da incassare — e quindi nessun obbligo fiscale da
+      # rispettare. Al posto del listino il sito mostra la domanda "quanto
+      # pagheresti?", che raccoglie l'informazione senza raccogliere denaro.
+      # Il giorno in cui si potrà vendere davvero: metti "true" e riappare tutto.
+      - key: SOLVIA_COMMERCIAL
+        value: "false"
+      # I tuoi dati nelle pagine legali. Render li chiede al primo deploy
+      # (sync: false) e li usa in fase di build per generare privacy, cookie e
+      # termini. Finché restano vuoti, le pagine mostrano "[Nome e Cognome]".
+      - key: SOLVIA_TITOLARE
+        sync: false
+      - key: SOLVIA_CONTATTO_EMAIL
+        sync: false
+      - key: SOLVIA_INDIRIZZO
+        sync: false
+      - key: SOLVIA_HOSTING
+        value: Render
+      # Salvataggio automatico del database. Serve SOLO se scegli il piano
+      # gratuito (che non ha disco): il database viene riscaricato all'avvio e
+      # ricaricato ogni pochi minuti su un tuo repository GitHub privato.
+      # Sul piano starter, con il disco qui sotto, lascia pure vuoto.
+      - key: SOLVIA_BACKUP_REPO
+        sync: false
+      - key: SOLVIA_BACKUP_TOKEN
+        sync: false
+      # Sostegno volontario ("offrimi un caffè"). Lasciali vuoti e sul sito non
+      # compare niente. Per accenderlo servono ENTRAMBI: l'indirizzo del profilo
+      # su una piattaforma riconosciuta e il nome di chi riceve davvero i soldi.
+      - key: SOLVIA_SOSTIENI_URL
+        sync: false
+      - key: SOLVIA_SOSTIENI_NOME
+        sync: false
+      # Indirizzo della console di direzione: cambialo con qualcosa che solo tu
+      # conosci. sync: false lo tiene fuori dal repository.
+      - key: SOLVIA_CONSOLE_PATH
+        sync: false
+      # Pre-lancio: serve solo quando la parte commerciale è accesa ma i
+      # pagamenti non sono ancora aperti (prezzi visibili, pulsanti che
+      # raccolgono email). Con SOLVIA_COMMERCIAL=false non ha alcun effetto.
+      - key: SOLVIA_PRELANCIO
+        value: "false"
+      # I quattro valori di Stripe. sync: false significa che Render li chiede a te
+      # al primo deploy e li tiene nel suo archivio cifrato: non finiscono mai su
+      # GitHub e non vanno incollati da nessun'altra parte. Lasciali vuoti finché
+      # non hai l'account: l'app parte lo stesso in modalità simulazione.
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_PRO
+        sync: false
+      - key: STRIPE_PRICE_TEAM
+        sync: false
+    # Disco persistente: tiene in vita il database fra una pubblicazione e
+    # l'altra, e rende inutile il salvataggio su GitHub. Richiede plan: starter.
+    # Per accenderlo: metti "starter" sopra e togli il cancelletto a queste righe.
+    # disk:
+    #   name: solvia-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
