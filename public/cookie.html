@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cookie policy — Solvia</title>
+<meta name="description" content="Quali cookie usa Solvia: solo un cookie tecnico di sessione, nessun tracciamento.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/pagine.css">
+</head>
+<body>
+
+<header class="page-head">
+  <div class="page-nav">
+    <a class="page-brand" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg> Solvia</a>
+    <a class="back" href="/">← Torna al sito</a>
+  </div>
+</header>
+
+
+<main class="doc">
+  <h1>Cookie policy</h1>
+  <p class="updated">Ultimo aggiornamento: 20 agosto 2026</p>
+
+  <div class="callout">
+    <p><strong>In breve: Solvia usa un solo cookie, e serve a tenerti collegato.</strong>
+    Nessun cookie pubblicitario, nessuna analisi del comportamento, nessun servizio di terze
+    parti che ti segue tra un sito e l'altro.</p>
+  </div>
+
+  <h2>Perché non vedi il banner dei cookie</h2>
+  <p>Le linee guida del Garante privacy prevedono che i <strong>cookie tecnici</strong> —
+  quelli strettamente necessari a erogare il servizio che hai richiesto — non richiedano
+  il consenso preventivo, ma solo di essere spiegati in un'informativa come questa.</p>
+  <p>Solvia usa esclusivamente cookie di questo tipo. Il banner che ti chiede di accettare
+  serve a chi installa cookie di profilazione o statistici di terze parti: qui non ce ne
+  sono, quindi il banner sarebbe una richiesta di consenso per qualcosa che non facciamo.</p>
+
+  <h2>Il cookie che usiamo</h2>
+  <table>
+    <thead><tr><th>Nome</th><th>Tipo</th><th>A cosa serve</th><th>Durata</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><code>solvia_token</code></td>
+        <td>Tecnico<br>(prima parte)</td>
+        <td>Ti mantiene collegato mentre usi l'applicazione. Senza, dovresti inserire
+        la password a ogni pagina. Contiene un identificativo firmato della sessione,
+        non i tuoi dati personali.</td>
+        <td>7 giorni,<br>o fino al logout</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Il cookie è impostato con l'attributo <code>httpOnly</code>, quindi non è leggibile
+  dal codice JavaScript della pagina, e con <code>sameSite=lax</code>, che impedisce che
+  venga inviato da altri siti. In produzione viaggia solo su connessione HTTPS.</p>
+
+  <h2>Cosa non troverai</h2>
+  <ul>
+    <li>Nessun cookie di profilazione o pubblicitario.</li>
+    <li>Nessuno strumento di statistiche di terze parti (né Google Analytics né equivalenti).</li>
+    <li>Le statistiche di visita sono nostre e <strong>non usano cookie</strong>: contano
+    le persone con un'impronta calcolata al volo dal server, che cambia ogni giorno e non
+    resta sul tuo dispositivo. Per questo non serve chiederti il consenso — e se il tuo
+    browser invia "Do Not Track" o il Global Privacy Control, non contiamo nemmeno quella.
+    I dettagli sono nell'<a href="/privacy.html">informativa privacy</a>.</li>
+    <li>Nessun pulsante social che carichi codice esterno.</li>
+    <li>Nessun pixel di tracciamento nelle email.</li>
+  </ul>
+
+  <h2>Come rimuoverlo</h2>
+  <p>Puoi cancellare il cookie in qualsiasi momento facendo <strong>logout</strong>, oppure
+  eliminando i dati del sito dalle impostazioni del tuo browser. Bloccando i cookie tecnici
+  l'accesso all'applicazione smette di funzionare, perché non sarebbe più possibile
+  riconoscerti tra una pagina e l'altra.</p>
+
+  <p>Per il trattamento dei dati personali in generale, vedi l'
+  <a href="/privacy.html">informativa privacy</a>.</p>
+</main>
+
+<footer class="page-foot">
+  <div style="margin-bottom:10px">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/cookie.html">Cookie</a>
+    <a href="/termini.html">Termini d'uso</a>
+    <a href="/#newsletter">Newsletter</a>
+  </div>
+  Solvia — servizio fornito da [Nome e Cognome]
+</footer>
+
+</body>
+</html>

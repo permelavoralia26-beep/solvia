@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disiscrizione — Solvia</title>
+<meta name="description" content="Disiscriviti dalla newsletter di Solvia.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/pagine.css">
+</head>
+<body>
+
+<header class="page-head">
+  <div class="page-nav">
+    <a class="page-brand" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg> Solvia</a>
+    <a class="back" href="/">← Torna al sito</a>
+  </div>
+</header>
+
+
+<main class="result" id="result">
+  <div class="loading"><div class="spinner dark"></div></div>
+</main>
+
+<footer class="page-foot">
+  <div style="margin-bottom:10px">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/cookie.html">Cookie</a>
+    <a href="/termini.html">Termini d'uso</a>
+    <a href="/#newsletter">Newsletter</a>
+  </div>
+  Solvia — servizio fornito da [Nome e Cognome]
+</footer>
+<script>
+(async function () {
+  const box = document.getElementById('result');
+  const token = new URLSearchParams(location.search).get('t');
+
+  if (!token) {
+    box.innerHTML = '<div class="icon ko">×</div><h1>Link non valido</h1>'
+      + '<p>Manca il codice. Usa il link di disiscrizione che trovi in fondo alla newsletter.</p>';
+    return;
+  }
+
+  // La disiscrizione avviene subito all'apertura del link: un clic solo, come richiesto.
+  try {
+    const res = await fetch('/api/newsletter/unsubscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: token }),
+    });
+    const data = await res.json();
+
+    if (!data.ok) {
+      box.innerHTML = '<div class="icon ko">×</div><h1>Disiscrizione non riuscita</h1>'
+        + '<p>' + (data.error || 'Il link non è valido.') + '</p>';
+      return;
+    }
+
+    box.innerHTML = '<div class="icon ok">✓</div><h1>Disiscritto</h1>'
+      + '<p>Non riceverai più la newsletter. Nessuna domanda, nessun modulo da compilare.</p>'
+      + '<p style="font-size:13.5px">Conserviamo il tuo indirizzo solo per non riscriverti per sbaglio. '
+      + 'Se preferisci che sparisca del tutto, cancellalo qui sotto.</p>'
+      + '<button class="btn btn-ghost btn-pill" id="erase">Cancella del tutto il mio indirizzo</button>'
+      + '<div style="margin-top:16px"><a class="back" href="/" style="font-size:13.5px;color:var(--muted)">Torna al sito</a></div>';
+
+    document.getElementById('erase').addEventListener('click', async function (e) {
+      e.target.disabled = true;
+      e.target.textContent = 'Cancellazione…';
+      const r = await fetch('/api/newsletter/erase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: token }),
+      });
+      const d = await r.json();
+      box.innerHTML = d.ok
+        ? '<div class="icon ok">✓</div><h1>Indirizzo cancellato</h1>'
+          + '<p>Il tuo indirizzo è stato rimosso definitivamente dai nostri archivi, come previsto dall\'art. 17 del GDPR.</p>'
+          + '<a class="btn btn-primary btn-pill" href="/">Torna al sito</a>'
+        : '<div class="icon ko">×</div><h1>Cancellazione non riuscita</h1><p>Riprova più tardi.</p>';
+    });
+  } catch {
+    box.innerHTML = '<div class="icon ko">×</div><h1>Qualcosa è andato storto</h1><p>Riprova tra qualche minuto.</p>';
+  }
+})();
+</script>
+</body>
+</html>

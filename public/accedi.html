@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accedi — Solvia</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#4F46E5">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Solvia">
+<link rel="apple-touch-icon" href="/icon-192.png">
+
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  body{display:flex;align-items:center;justify-content:center;padding:24px;
+       background:linear-gradient(160deg,#EEF2FF 0%,#F8FAFC 45%);}
+  .auth{width:100%;max-width:420px;}
+  .auth-brand{display:flex;align-items:center;justify-content:center;gap:10px;
+              font-weight:800;font-size:24px;margin-bottom:8px;}
+  .auth-brand svg{width:38px;height:38px;border-radius:10px;}
+  .auth-sub{text-align:center;color:var(--muted);font-size:14.5px;margin-bottom:26px;}
+  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;
+             padding:28px;box-shadow:var(--shadow);}
+  .tabs{display:flex;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:22px;}
+  .tab{flex:1;padding:8px;border:none;background:none;border-radius:7px;font-size:14px;
+       font-weight:600;color:var(--muted);cursor:pointer;}
+  .tab.active{background:var(--surface);color:var(--primary);box-shadow:0 1px 3px rgba(15,23,42,.08);}
+  .demo-note{margin-top:18px;padding:12px 14px;background:var(--primary-soft);border-radius:10px;
+             font-size:12.5px;color:var(--ink-2);line-height:1.6;}
+  .back{display:block;text-align:center;margin-top:20px;font-size:13.5px;color:var(--muted);}
+  .link-row{text-align:center;margin-top:16px;}
+  .linkish{background:none;border:none;padding:0;font-size:13.5px;color:var(--primary);
+           font-weight:600;cursor:pointer;font-family:inherit;}
+  .linkish:hover{text-decoration:underline;}
+  .forgot-lead{font-size:13.5px;color:var(--muted);line-height:1.65;margin:0 0 18px;}
+</style>
+</head>
+<body>
+<div class="auth">
+  <div class="auth-brand">
+    <svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg>
+    Solvia
+  </div>
+  <p class="auth-sub">Il copilota per il tuo lavoro amministrativo</p>
+
+  <div class="auth-card">
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Accedi</button>
+      <button class="tab" data-tab="register">Crea account</button>
+    </div>
+
+    <div class="alert alert-error" id="err"></div>
+    <div class="alert alert-ok" id="ok"></div>
+
+    <form id="login-form">
+      <div class="field">
+        <label for="l-email">Email</label>
+        <input class="input" type="email" id="l-email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="l-pass">Password</label>
+        <input class="input" type="password" id="l-pass" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="l-submit">Accedi</button>
+      <p class="link-row"><button type="button" class="linkish" id="show-forgot">Password dimenticata?</button></p>
+    </form>
+
+    <form id="forgot-form" class="hidden">
+      <p class="forgot-lead">Inserisci la tua email: ti mandiamo un link per scegliere
+        una nuova password. Vale un'ora.</p>
+      <div class="field">
+        <label for="f-email">Email</label>
+        <input class="input" type="email" id="f-email" autocomplete="email" required>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="f-submit">Mandami il link</button>
+      <p class="link-row"><button type="button" class="linkish" id="back-login">← Torna all'accesso</button></p>
+    </form>
+
+    <form id="register-form" class="hidden">
+      <div class="field">
+        <label for="r-name">Nome e cognome</label>
+        <input class="input" type="text" id="r-name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="r-business">Attività / studio <span style="font-weight:400;color:var(--muted)">(facoltativo)</span></label>
+        <input class="input" type="text" id="r-business" autocomplete="organization">
+      </div>
+      <div class="field">
+        <label for="r-email">Email</label>
+        <input class="input" type="email" id="r-email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="r-pass">Password</label>
+        <input class="input" type="password" id="r-pass" autocomplete="new-password" required minlength="8">
+        <p class="hint">Almeno 8 caratteri.</p>
+      </div>
+      <button class="btn btn-primary btn-block" type="submit" id="r-submit">Crea account</button>
+      <p class="demo-note">Al primo accesso scegli tu se partire da un account vuoto o
+        con clienti, fatture ed email di esempio da esplorare.</p>
+    </form>
+  </div>
+
+  <a class="back" href="/">← Torna al sito</a>
+</div>
+
+<script>
+const err = document.getElementById('err');
+const showErr = (m) => { err.textContent = m; err.classList.add('show'); };
+const hideErr = () => err.classList.remove('show');
+
+const ok = document.getElementById('ok');
+const showOk = (m) => { ok.textContent = m; ok.classList.add('show'); };
+
+/* Mostra uno solo dei tre moduli: accesso, registrazione, recupero password. */
+function mostraModulo(quale) {
+  ['login', 'register', 'forgot'].forEach((n) => {
+    document.getElementById(`${n}-form`).classList.toggle('hidden', n !== quale);
+  });
+  document.querySelectorAll('.tab').forEach((t) => {
+    t.classList.toggle('active', t.dataset.tab === quale);
+  });
+  hideErr();
+  ok.classList.remove('show');
+}
+
+document.querySelectorAll('.tab').forEach((tab) => {
+  tab.addEventListener('click', () => mostraModulo(tab.dataset.tab));
+});
+document.getElementById('show-forgot').addEventListener('click', () => mostraModulo('forgot'));
+document.getElementById('back-login').addEventListener('click', () => mostraModulo('login'));
+
+async function post(url, payload, button, busyLabel) {
+  const original = button.textContent;
+  button.disabled = true;
+  button.textContent = busyLabel;
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Operazione non riuscita');
+    window.location.href = '/app';
+  } catch (e) {
+    showErr(e.message);
+    button.disabled = false;
+    button.textContent = original;
+  }
+}
+
+document.getElementById('login-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  hideErr();
+  post('/api/auth/login', {
+    email: document.getElementById('l-email').value.trim(),
+    password: document.getElementById('l-pass').value,
+  }, document.getElementById('l-submit'), 'Accesso in corso…');
+});
+
+document.getElementById('register-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  hideErr();
+  post('/api/auth/register', {
+    name: document.getElementById('r-name').value.trim(),
+    business_name: document.getElementById('r-business').value.trim(),
+    email: document.getElementById('r-email').value.trim(),
+    password: document.getElementById('r-pass').value,
+  }, document.getElementById('r-submit'), 'Creazione in corso…');
+});
+
+/* Recupero password: la risposta è sempre la stessa, esista o no l'indirizzo.
+   Dire "questa email non esiste" regalerebbe a chiunque l'elenco degli iscritti. */
+document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  hideErr();
+  const btn = document.getElementById('f-submit');
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso…';
+  try {
+    const res = await fetch('/api/auth/password/richiesta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: document.getElementById('f-email').value.trim() }),
+    });
+    const data = await res.json();
+    document.getElementById('forgot-form').classList.add('hidden');
+    showOk(data.message || 'Se esiste un account con questa email, riceverai il link.');
+  } catch {
+    showErr('Non è stato possibile inviare la richiesta. Riprova.');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Mandami il link';
+});
+</script>
+<script src="/js/misura.js" defer></script>
+</body>
+</html>

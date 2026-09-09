@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conferma iscrizione — Solvia</title>
+<meta name="description" content="Conferma della tua iscrizione alla newsletter di Solvia.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/pagine.css">
+</head>
+<body>
+
+<header class="page-head">
+  <div class="page-nav">
+    <a class="page-brand" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg> Solvia</a>
+    <a class="back" href="/">← Torna al sito</a>
+  </div>
+</header>
+
+
+<main class="result" id="result">
+  <div class="loading"><div class="spinner dark"></div></div>
+</main>
+
+<footer class="page-foot">
+  <div style="margin-bottom:10px">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/cookie.html">Cookie</a>
+    <a href="/termini.html">Termini d'uso</a>
+    <a href="/#newsletter">Newsletter</a>
+  </div>
+  Solvia — servizio fornito da [Nome e Cognome]
+</footer>
+<script>
+(async function () {
+  const box = document.getElementById('result');
+  const token = new URLSearchParams(location.search).get('t');
+
+  if (!token) {
+    box.innerHTML = '<div class="icon ko">×</div><h1>Link non valido</h1>'
+      + '<p>Manca il codice di conferma. Controlla di aver aperto il link completo che ti abbiamo inviato via email.</p>'
+      + '<a class="btn btn-primary btn-pill" href="/">Torna al sito</a>';
+    return;
+  }
+
+  try {
+    const res = await fetch('/api/newsletter/confirm?t=' + encodeURIComponent(token));
+    const data = await res.json();
+
+    if (data.ok) {
+      box.innerHTML = '<div class="icon ok">✓</div>'
+        + '<h1>' + (data.already ? 'Eri già iscritto' : 'Iscrizione confermata') + '</h1>'
+        + '<p>' + (data.already
+            ? 'Il tuo indirizzo era già confermato: non devi fare altro.'
+            : 'Perfetto, ci siamo. Ti scriverò quando c\'è qualcosa di utile da raccontare, non per riempirti la casella.')
+        + '</p>'
+        + '<p style="font-size:13.5px">Puoi disiscriverti quando vuoi dal link in fondo a ogni email.</p>'
+        + '<a class="btn btn-primary btn-pill" href="/">Torna al sito</a>';
+    } else {
+      box.innerHTML = '<div class="icon ko">×</div><h1>Conferma non riuscita</h1>'
+        + '<p>' + (data.error || 'Il link non è valido o è già stato usato.') + '</p>'
+        + '<a class="btn btn-primary btn-pill" href="/#newsletter">Iscriviti di nuovo</a>';
+    }
+  } catch {
+    box.innerHTML = '<div class="icon ko">×</div><h1>Qualcosa è andato storto</h1>'
+      + '<p>Riprova tra qualche minuto.</p>'
+      + '<a class="btn btn-primary btn-pill" href="/">Torna al sito</a>';
+  }
+})();
+</script>
+</body>
+</html>

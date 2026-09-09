@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Console</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="data:,">
+<style>
+  /* Piattaforma separata, di proposito anche a vedersi: scura, densa, senza
+     marchio. Aprendola per sbaglio è chiaro che non è il prodotto per i clienti. */
+  :root{
+    --sfondo:#0B1120; --pannello:#131C31; --pannello-2:#1B2540; --bordo:#26324D;
+    --testo:#E8EDF7; --tenue:#8A97B4; --acceso:#818CF8; --verde:#34D399;
+    --rosso:#FB7185; --ambra:#FBBF24;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--sfondo);color:var(--testo);
+    font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+    font-size:14px;line-height:1.55;-webkit-text-size-adjust:100%;}
+  a{color:var(--acceso);}
+
+  .barra{display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    padding:14px 22px;border-bottom:1px solid var(--bordo);background:var(--pannello);
+    position:sticky;top:0;z-index:5;}
+  .titolo{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px;}
+  .titolo b{color:var(--acceso);}
+  .spazio{flex:1;}
+  .chi{color:var(--tenue);font-size:12.5px;}
+
+  .periodi{display:flex;gap:4px;background:var(--sfondo);border:1px solid var(--bordo);
+    border-radius:8px;padding:3px;}
+  .periodo{border:none;background:none;color:var(--tenue);font:inherit;font-size:12.5px;
+    padding:5px 11px;border-radius:6px;cursor:pointer;white-space:nowrap;}
+  .periodo.attivo{background:var(--acceso);color:#0B1120;font-weight:700;}
+
+  .btn{border:1px solid var(--bordo);background:var(--pannello-2);color:var(--testo);
+    font:inherit;font-size:12.5px;padding:6px 13px;border-radius:7px;cursor:pointer;}
+  .btn:hover{border-color:var(--acceso);}
+  .btn-pieno{background:var(--acceso);color:#0B1120;border-color:var(--acceso);font-weight:700;}
+
+  .foglio{padding:22px;max-width:1500px;margin:0 auto;}
+  .griglia{display:grid;gap:14px;margin-bottom:14px;}
+  .g4{grid-template-columns:repeat(4,1fr);}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  @media (max-width:1100px){.g4{grid-template-columns:1fr 1fr;}.g2,.g3{grid-template-columns:1fr;}}
+  @media (max-width:560px){.g4{grid-template-columns:1fr;}}
+
+  .pannello{background:var(--pannello);border:1px solid var(--bordo);border-radius:12px;padding:18px;}
+  .pannello h2{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--tenue);
+    margin:0 0 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .pannello h2 span{text-transform:none;letter-spacing:0;font-weight:400;}
+
+  .cifra{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:1.15;}
+  .sotto{font-size:12px;color:var(--tenue);margin-top:4px;}
+  .su{color:var(--verde);} .giu{color:var(--rosso);} .ambra{color:var(--ambra);}
+
+  /* Imbuto */
+  .passo{margin-bottom:13px;}
+  .passo-testa{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+    font-size:13px;margin-bottom:4px;}
+  .passo-testa b{font-weight:600;}
+  .passo-testa i{font-style:normal;color:var(--tenue);font-size:11.5px;}
+  .passo-barra{height:9px;background:var(--sfondo);border-radius:99px;overflow:hidden;}
+  .passo-barra div{height:100%;background:linear-gradient(90deg,var(--acceso),#C084FC);
+    border-radius:99px;transition:width .35s;}
+  .passo-piede{font-size:11.5px;color:var(--tenue);margin-top:3px;}
+
+  /* Barre giornaliere */
+  .barre{display:flex;align-items:flex-end;gap:5px;height:150px;}
+  .colonna{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:2px;
+    height:100%;position:relative;min-width:0;}
+  .colonna i{display:block;width:9px;border-radius:2px 2px 0 0;min-height:2px;}
+  .colonna .v{background:var(--acceso);}
+  .colonna .u{background:var(--verde);}
+  .colonna span{position:absolute;bottom:-18px;font-size:10px;color:var(--tenue);}
+  .legenda{display:flex;gap:14px;margin-top:26px;font-size:11.5px;color:var(--tenue);}
+  .legenda em{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:5px;}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;}
+  th{text-align:left;color:var(--tenue);font-weight:600;padding:6px 8px;
+    border-bottom:1px solid var(--bordo);text-transform:uppercase;font-size:10.5px;
+    letter-spacing:.06em;}
+  td{padding:6px 8px;border-bottom:1px solid var(--bordo);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.tronca{max-width:0;width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .scorri{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .vuoto{color:var(--tenue);font-size:12.5px;padding:8px 0;}
+
+  .tag{display:inline-block;padding:1px 7px;border-radius:5px;font-size:11px;font-weight:700;}
+  .tag.paga{background:rgba(52,211,153,.16);color:var(--verde);}
+  .tag.ok{background:rgba(129,140,248,.16);color:var(--acceso);}
+  .tag.fermo{background:rgba(251,191,36,.16);color:var(--ambra);}
+
+  /* Flusso in diretta */
+  .diretta{display:grid;gap:1px;font-size:12px;}
+  .fatto{display:grid;grid-template-columns:66px 168px 1fr auto;gap:10px;padding:5px 8px;
+    border-radius:6px;align-items:center;}
+  .fatto:nth-child(odd){background:var(--pannello-2);}
+  .fatto.soldi{background:rgba(52,211,153,.13);color:var(--verde);font-weight:700;}
+  .fatto .q{color:var(--tenue);white-space:nowrap;}
+  .fatto .d,.fatto .u{color:var(--tenue);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  @media (max-width:700px){
+    .fatto{grid-template-columns:60px 1fr;}
+    .fatto .d,.fatto .u{grid-column:2;}
+  }
+
+  .nota{font-size:11.5px;color:var(--tenue);margin-top:12px;line-height:1.6;}
+
+  /* Accesso */
+  .porta{max-width:340px;margin:16vh auto;padding:26px;background:var(--pannello);
+    border:1px solid var(--bordo);border-radius:12px;}
+  .porta h1{font-size:13px;text-transform:uppercase;letter-spacing:.14em;margin:0 0 18px;
+    color:var(--tenue);font-weight:700;}
+  .campo{margin-bottom:12px;}
+  .campo label{display:block;font-size:11px;color:var(--tenue);margin-bottom:5px;
+    text-transform:uppercase;letter-spacing:.06em;}
+  .campo input{width:100%;padding:9px 11px;background:var(--sfondo);color:var(--testo);
+    border:1px solid var(--bordo);border-radius:7px;font:inherit;font-size:13px;}
+  .campo input:focus{outline:none;border-color:var(--acceso);}
+  .errore{color:var(--rosso);font-size:12.5px;margin-top:10px;min-height:18px;}
+  .nascosto{display:none;}
+</style>
+</head>
+<body>
+
+<!-- Accesso: spoglio di proposito, non dice a cosa serve -->
+<div id="porta" class="porta nascosto">
+  <h1>Accesso riservato</h1>
+  <form id="modulo">
+    <div class="campo">
+      <label for="e">Utenza</label>
+      <input type="email" id="e" autocomplete="username" required>
+    </div>
+    <div class="campo">
+      <label for="p">Chiave</label>
+      <input type="password" id="p" autocomplete="current-password" required>
+    </div>
+    <button class="btn btn-pieno" type="submit" id="entra" style="width:100%">Entra</button>
+    <div class="errore" id="err"></div>
+  </form>
+</div>
+
+<div id="console" class="nascosto">
+  <div class="barra">
+    <div class="titolo" id="marchio"></div>
+    <div class="periodi" id="periodi"></div>
+    <div class="spazio"></div>
+    <div class="chi" id="chi"></div>
+    <button class="btn" id="aggiorna">Aggiorna</button>
+    <button class="btn" id="esci">Esci</button>
+  </div>
+  <div class="foglio" id="foglio"></div>
+</div>
+
+<script>
+const PERCORSO = window.location.pathname.replace(/\/$/, '');
+
+const $ = (id) => document.getElementById(id);
+const mostra = (id) => $(id).classList.remove('nascosto');
+const nascondi = (id) => $(id).classList.add('nascosto');
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g,
+  (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const num = (n) => new Intl.NumberFormat('it-IT').format(Number(n) || 0);
+const eur = (n) => new Intl.NumberFormat('it-IT',
+  { style: 'currency', currency: 'EUR', maximumFractionDigits: 0, useGrouping: true })
+  .format(Number(n) || 0);
+const eur2 = (n) => new Intl.NumberFormat('it-IT',
+  { style: 'currency', currency: 'EUR', useGrouping: true }).format(Number(n) || 0);
+
+function dmy(iso) {
+  if (!iso) return '—';
+  const [y, m, d] = String(iso).slice(0, 10).split('-');
+  return `${d}/${m}/${y}`;
+}
+
+function quando(valore) {
+  if (!valore) return '';
+  const t = new Date(String(valore).replace(' ', 'T') + (String(valore).includes('Z') ? '' : 'Z'));
+  const min = Math.round((Date.now() - t.getTime()) / 60000);
+  if (!Number.isFinite(min)) return '';
+  if (min < 1) return 'ora';
+  if (min < 60) return `${min}m fa`;
+  if (min < 1440) return `${Math.round(min / 60)}h fa`;
+  return `${Math.round(min / 1440)}g fa`;
+}
+
+const ETICHETTA = { oggi: 'Oggi', settimana: '7g', mese: '30g', trimestre: '90g' };
+let periodo = 'settimana';
+
+const NOME = {
+  visita: 'visita', clic: 'clic', prezzi_visti: 'ha visto i prezzi',
+  faq_aperta: 'ha aperto una FAQ', newsletter_vista: 'ha visto la newsletter',
+  registrazione: 'nuovo account', benvenuto_completato: 'ha finito il benvenuto',
+  dati_esempio: 'ha caricato gli esempi', abbonamento_attivato: 'HA PAGATO',
+  abbonamento_disdetto: 'ha disdetto', newsletter_iscrizione: 'iscrizione newsletter',
+  newsletter_conferma: 'newsletter confermata', invito_studio: 'ha invitato nello studio',
+  invito_accettato: 'è entrato in uno studio',
+};
+
+/* ------------------------------------------------------------------ */
+/* Porta d'ingresso                                                    */
+/* ------------------------------------------------------------------ */
+
+async function stato() {
+  try { return await (await fetch(`${PERCORSO}/stato`)).json(); }
+  catch { return { autorizzato: false }; }
+}
+
+$('modulo').addEventListener('submit', async (ev) => {
+  ev.preventDefault();
+  const bottone = $('entra');
+  bottone.disabled = true;
+  $('err').textContent = '';
+  try {
+    const r = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: $('e').value.trim(), password: $('p').value }),
+    });
+    const d = await r.json();
+    if (!r.ok) throw new Error(d.error || 'Accesso non riuscito');
+
+    const s = await stato();
+    // Chi ha un account ma non amministra riceve lo stesso messaggio di chi ha
+    // sbagliato la password: da qui non deve capire che esista dell'altro.
+    if (!s.autorizzato) throw new Error('Credenziali non valide');
+    avvia(s);
+  } catch (e) {
+    $('err').textContent = e.message;
+    bottone.disabled = false;
+  }
+});
+
+$('esci').addEventListener('click', async () => {
+  await fetch('/api/auth/logout', { method: 'POST' });
+  window.location.reload();
+});
+
+$('aggiorna').addEventListener('click', () => carica());
+
+/* ------------------------------------------------------------------ */
+/* Disegno                                                             */
+/* ------------------------------------------------------------------ */
+
+function variazione(ora, prima) {
+  if (!prima) return ora ? '<span class="su">nuovo</span>' : '';
+  const d = Math.round(((ora - prima) / prima) * 100);
+  if (d === 0) return 'invariato';
+  return `<span class="${d > 0 ? 'su' : 'giu'}">${d > 0 ? '+' : ''}${d}%</span>`;
+}
+
+const imbuto = (passi) => {
+  const max = passi[0]?.n || 1;
+  return passi.map((p, i) => `
+    <div class="passo">
+      <div class="passo-testa">
+        <b>${esc(p.etichetta)}</b>
+        <span>${num(p.n)} <i>${esc(p.nota)}</i></span>
+      </div>
+      <div class="passo-barra"><div style="width:${Math.max((p.n / max) * 100, p.n ? 2 : 0)}%"></div></div>
+      <div class="passo-piede">${i === 0 ? 'punto di partenza'
+        : `${p.suTotale}% del totale${p.suPrecedente !== null
+          ? ` · ${p.suPrecedente}% di chi era al passo prima` : ''}`}</div>
+    </div>`).join('');
+};
+
+/* Distribuzione delle risposte sul prezzo: stesse barre dell'imbuto, senza i piedi. */
+const fasce = (righe) => {
+  const max = Math.max(...righe.map((r) => r.n), 1);
+  return righe.map((f) => `
+    <div class="passo" style="margin-bottom:9px">
+      <div class="passo-testa"><b>${esc(f.etichetta)}</b><span>${num(f.n)}</span></div>
+      <div class="passo-barra"><div style="width:${Math.max((f.n / max) * 100, f.n ? 2 : 0)}%"></div></div>
+    </div>`).join('');
+};
+
+const barre = (righe) => {
+  if (!righe.length) return '<p class="vuoto">Ancora nessuna visita.</p>';
+  const max = Math.max(...righe.map((r) => r.visite), 1);
+  return `
+    <div class="barre">
+      ${righe.map((r) => `
+        <div class="colonna" title="${dmy(r.giorno)}: ${r.visite} visite, ${r.unici} persone">
+          <i class="v" style="height:${(r.visite / max) * 100}%"></i>
+          <i class="u" style="height:${(r.unici / max) * 100}%"></i>
+          <span>${esc(r.giorno.slice(8))}</span>
+        </div>`).join('')}
+    </div>
+    <div class="legenda">
+      <span><em style="background:var(--acceso)"></em>visite</span>
+      <span><em style="background:var(--verde)"></em>persone diverse</span>
+    </div>`;
+};
+
+const elenco = (titolo, righe, testo, valore, extra) => `
+  <div class="pannello">
+    <h2>${titolo}</h2>
+    ${righe.length ? `<table><tbody>${righe.map((r) => `
+      <tr><td class="tronca">${esc(testo(r))}</td>
+      <td class="n">${num(valore(r))}</td>
+      ${extra ? `<td class="n" style="color:var(--tenue)">${esc(extra(r))}</td>` : ''}</tr>`).join('')}
+    </tbody></table>` : '<p class="vuoto">Ancora niente.</p>'}
+  </div>`;
+
+function disegna(d) {
+  const t = d.traffico;
+  const e = d.economia;
+
+  $('periodi').innerHTML = d.periodi.map((p) => `
+    <button class="periodo ${p === d.periodo ? 'attivo' : ''}" data-periodo="${p}">
+      ${ETICHETTA[p] || p}</button>`).join('');
+  $('periodi').querySelectorAll('[data-periodo]').forEach((b) => {
+    b.addEventListener('click', () => { periodo = b.dataset.periodo; carica(); });
+  });
+
+  $('foglio').innerHTML = `
+    ${!d.attivo ? `<div class="pannello" style="border-color:var(--ambra);margin-bottom:14px">
+      <b class="ambra">Misurazione spenta.</b> È attiva la variabile d'ambiente che la
+      disattiva (<code>${esc(d.variabile || '')}</code>): i numeri restano fermi finché
+      non la togli.
+    </div>` : ''}
+
+    <div class="griglia g4">
+      <div class="pannello"><h2>Visite</h2>
+        <div class="cifra">${num(t.visite)}</div>
+        <div class="sotto">${variazione(t.visite, t.visitePrecedenti)} sul periodo prima</div></div>
+      <div class="pannello"><h2>Persone diverse</h2>
+        <div class="cifra">${num(t.visitatori)}</div>
+        <div class="sotto">${variazione(t.visitatori, t.visitatoriPrecedenti)} sul periodo prima</div></div>
+      <div class="pannello"><h2>Incasso mensile</h2>
+        <div class="cifra">${eur(e.mrr)}</div>
+        <div class="sotto">${eur(e.arr)} all'anno se non cambia nulla</div></div>
+      <div class="pannello"><h2>Chi paga</h2>
+        <div class="cifra">${num(e.paganti)}</div>
+        <div class="sotto">su ${num(e.utenti)} account · ${e.conversione}%${
+          e.disdette ? ` · <span class="giu">${e.disdette} disdette</span>` : ''}</div></div>
+    </div>
+
+    <div class="griglia g2">
+      <div class="pannello">
+        <h2>Dal sito al pagamento <span>${ETICHETTA[d.periodo]}</span></h2>
+        ${imbuto(d.imbuto)}
+        <p class="nota">I primi tre passi contano visitatori anonimi, gli ultimi tre contano
+        account: due misure diverse messe in fila, non la stessa persona seguita fino in fondo.
+        L'impronta del visitatore vive un giorno e poi sparisce.</p>
+      </div>
+      <div class="pannello">
+        <h2>Visite giorno per giorno</h2>
+        ${barre(d.perGiorno)}
+      </div>
+    </div>
+
+    <div class="griglia g2">
+      ${elenco('Cosa hanno premuto', d.clic, (r) => r.label, (r) => r.n, (r) => `${r.unici} pers.`)}
+      ${elenco('Da dove arrivano', d.provenienze, (r) => r.fonte, (r) => r.visite, (r) => `${r.unici} pers.`)}
+    </div>
+
+    <div class="griglia g2">
+      ${elenco('Pagine più aperte', d.pagine, (r) => r.path, (r) => r.visite, (r) => `${r.unici} pers.`)}
+      ${elenco('Domande che si aprono di più', d.faq, (r) => r.label, (r) => r.n)}
+    </div>
+
+    <div class="pannello" style="margin-bottom:14px">
+      <h2>Chi paga <span>${e.perPiano.map((p) => `${p.n}× ${p.nome}`).join(' · ') || 'ancora nessuno'}</span></h2>
+      ${e.paganti ? `<div class="griglia g3" style="margin-bottom:14px">
+        <div><div class="sotto">Ricavo medio</div><div class="cifra" style="font-size:20px">${eur2(e.arpu)}</div></div>
+        <div><div class="sotto">Attivazioni nel periodo</div><div class="cifra" style="font-size:20px">${num(e.attivazioni)}</div></div>
+        <div><div class="sotto">Disdette nel periodo</div><div class="cifra" style="font-size:20px">${num(e.disdette)}</div></div>
+      </div>` : ''}
+      ${d.paganti.length ? `<div class="scorri"><table>
+        <thead><tr><th>Cliente</th><th>Piano</th><th>Stato</th><th>Dal</th><th>Ultimo accesso</th></tr></thead>
+        <tbody>${d.paganti.map((p) => `<tr>
+          <td>${esc(p.name)}<br><span style="color:var(--tenue)">${esc(p.email)}</span></td>
+          <td>${esc(p.plan)}</td><td>${esc(p.subscription_status)}</td>
+          <td>${dmy(p.created_at)}</td><td>${quando(p.last_login_at) || '—'}</td>
+        </tr>`).join('')}</tbody></table></div>`
+        : '<p class="vuoto">Nessun abbonamento attivo. Quando arriverà il primo, comparirà qui.</p>'}
+    </div>
+
+    <div class="griglia g2">
+      <div class="pannello">
+        <h2>Ultimi iscritti <span>${num(e.nuoviUtenti)} nuovi · ${num(e.attivi)} attivi</span></h2>
+        <div class="scorri"><table>
+          <thead><tr><th>Chi</th><th>Quando</th><th>Arrivato a</th></tr></thead>
+          <tbody>${d.iscritti.map((u) => `<tr>
+            <td>${esc(u.name)}<br><span style="color:var(--tenue)">${esc(u.email)}</span></td>
+            <td>${quando(u.created_at)}</td>
+            <td>${u.plan !== 'free' ? `<span class="tag paga">${esc(u.plan)}</span>`
+              : u.onboarded_at ? '<span class="tag ok">configurato</span>'
+              : '<span class="tag fermo">fermo al benvenuto</span>'}</td>
+          </tr>`).join('') || '<tr><td colspan="3" class="vuoto">Nessun account.</td></tr>'}
+        </tbody></table></div>
+      </div>
+
+      <div class="pannello">
+        <h2>Lista d'attesa <span>${d.attesa.attivo ? 'pre-lancio attivo' : 'pagamenti aperti'}</span></h2>
+        ${d.attesa.totale ? `
+          <div class="cifra">${num(d.attesa.totale)}</div>
+          <div class="sotto">persone che volevano pagare · varrebbero ${eur(d.attesa.potenziale)} al mese</div>
+          <div style="margin-top:14px" class="scorri"><table>
+            <thead><tr><th>Chi</th><th>Piano</th><th>Da dove</th><th>Quando</th></tr></thead>
+            <tbody>${d.attesa.ultimi.map((a) => `<tr>
+              <td>${esc(a.email)}</td><td>${esc(a.plan)}</td>
+              <td>${esc(a.source)}</td><td>${quando(a.created_at)}</td>
+            </tr>`).join('')}</tbody></table></div>`
+          : `<p class="vuoto">${d.attesa.attivo
+              ? 'Ancora nessuno in lista. Compare qui chi preme un pulsante del prezzo.'
+              : 'I pagamenti sono aperti: la lista d\'attesa non serve più.'}</p>`}
+      </div>
+
+      <div class="pannello">
+        <h2>Quanto pagherebbero <span>risposte al sondaggio</span></h2>
+        ${d.sondaggio.totale ? `
+          <div class="griglia g3">
+            <div><div class="sotto">Risposte</div><div class="cifra" style="font-size:22px">${num(d.sondaggio.totale)}</div></div>
+            <div><div class="sotto">Pagherebbero</div><div class="cifra" style="font-size:22px">${num(d.sondaggio.disposti)}</div></div>
+            <div><div class="sotto">Cifra tipica</div><div class="cifra" style="font-size:22px">${eur(d.sondaggio.mediana)}</div></div>
+          </div>
+          <div style="margin-top:16px">${fasce(d.sondaggio.perFascia)}</div>
+          <p class="nota">La <b>cifra tipica</b> è la mediana di chi pagherebbe qualcosa: uno
+          scherzoso che scrive 500 non la sposta, la media sì. Media: ${eur(d.sondaggio.media)},
+          massimo indicato: ${eur(d.sondaggio.massimo)}.</p>
+          ${d.sondaggio.conEmail ? `
+            <p class="nota"><b>${num(d.sondaggio.conEmail)}</b> hanno anche lasciato l'email:
+            sono le persone più calde che hai. Scrivi a loro per prime.</p>` : ''}
+          <div style="margin-top:14px" class="scorri"><table>
+            <thead><tr><th>Cifra</th><th>Che lavoro fa</th><th>Email</th><th>Quando</th></tr></thead>
+            <tbody>${d.sondaggio.ultime.map((s) => `<tr>
+              <td>${eur(s.importo)}</td><td>${esc(s.mestiere) || '—'}</td>
+              <td>${esc(s.email) || '—'}</td><td>${quando(s.created_at)}</td>
+            </tr>`).join('')}</tbody></table></div>`
+          : '<p class="vuoto">Ancora nessuna risposta. Compare qui chi risponde alla domanda sul prezzo.</p>'}
+      </div>
+
+      <div class="pannello">
+        <h2>Newsletter</h2>
+        <div class="griglia g3">
+          <div><div class="sotto">Confermati</div><div class="cifra" style="font-size:22px">${num(d.newsletter.confermati)}</div></div>
+          <div><div class="sotto">In attesa</div><div class="cifra" style="font-size:22px">${num(d.newsletter.inAttesa)}</div></div>
+          <div><div class="sotto">Disiscritti</div><div class="cifra" style="font-size:22px">${num(d.newsletter.disiscritti)}</div></div>
+        </div>
+        <p class="nota">Chi resta "in attesa" ha lasciato l'email ma non ha cliccato il link
+        di conferma: senza quel clic non riceve niente, ed è giusto così.</p>
+      </div>
+    </div>
+
+    <div class="pannello">
+      <h2>In diretta <span>${num(d.eventiTotali)} eventi in archivio</span></h2>
+      <div class="diretta">
+        ${d.diretta.map((ev) => `
+          <div class="fatto ${ev.name === 'abbonamento_attivato' ? 'soldi' : ''}">
+            <span class="q">${quando(ev.created_at)}</span>
+            <span>${esc(NOME[ev.name] || ev.name)}</span>
+            <span class="d">${esc(ev.label || ev.path || ev.referrer || '')}</span>
+            <span class="u">${ev.utente ? esc(ev.utente) : ''}</span>
+          </div>`).join('') || '<p class="vuoto">Ancora nessun evento.</p>'}
+      </div>
+      <p class="nota">Nessun indirizzo IP viene conservato: le persone si contano con
+      un'impronta che cambia ogni giorno, quindi da qui non si può seguire nessuno nel tempo.
+      Di proposito.</p>
+    </div>`;
+}
+
+async function carica() {
+  const r = await fetch(`${PERCORSO}/dati?periodo=${periodo}`);
+  if (r.status === 404 || r.status === 401) return window.location.reload();
+  disegna(await r.json());
+}
+
+function avvia(s) {
+  nascondi('porta');
+  mostra('console');
+  // Il marchio compare solo a cose fatte: chi arriva senza diritto non trova
+  // nel codice della pagina nemmeno il nome del prodotto.
+  $('marchio').innerHTML = `${esc(s.prodotto || '')} <b>· console</b>`;
+  $('chi').textContent = s.nome || '';
+  carica();
+  // Aggiornamento automatico: la console si guarda mentre succedono le cose.
+  setInterval(carica, 60000);
+}
+
+(async function inizio() {
+  const s = await stato();
+  if (s.autorizzato) avvia(s);
+  else mostra('porta');
+}());
+</script>
+</body>
+</html>

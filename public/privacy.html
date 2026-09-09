@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informativa privacy — Solvia</title>
+<meta name="description" content="Come Solvia tratta i dati personali: finalità, basi giuridiche, conservazione e diritti.">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/pagine.css">
+</head>
+<body>
+
+<header class="page-head">
+  <div class="page-nav">
+    <a class="page-brand" href="/"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg> Solvia</a>
+    <a class="back" href="/">← Torna al sito</a>
+  </div>
+</header>
+
+
+<main class="doc">
+  <h1>Informativa privacy</h1>
+  <p class="updated">Ultimo aggiornamento: 20 agosto 2026 · Regolamento UE 2016/679 (GDPR), artt. 13 e 14</p>
+
+  
+<div class="callout warn">
+  <p><strong>Da completare prima di pubblicare.</strong> Imposta le variabili
+  <code>SOLVIA_TITOLARE</code>, <code>SOLVIA_CONTATTO_EMAIL</code> e
+  <code>SOLVIA_INDIRIZZO</code> nel pannello del tuo host, poi rigenera le pagine con
+  <code>npm run build:pages</code>. Finché restano i campi tra parentesi quadre, questo
+  riquadro resta visibile ai visitatori. Questo testo è un modello scritto su misura per come
+  funziona davvero Solvia, ma non sostituisce il parere di un professionista: se il
+  progetto cresce o inizi a trattare dati di terzi in modo strutturato, fallo rivedere
+  a chi si occupa di protezione dei dati.</p>
+</div>
+
+  <div class="toc">
+    <strong>Indice</strong>
+    <ol>
+      <li><a href="#titolare">Chi tratta i tuoi dati</a></li>
+      <li><a href="#dati">Quali dati raccogliamo</a></li>
+      <li><a href="#finalita">Perché li trattiamo</a></li>
+      <li><a href="#conservazione">Per quanto tempo li conserviamo</a></li>
+      <li><a href="#destinatari">Chi altro li vede</a></li>
+      <li><a href="#trasferimenti">Trasferimenti fuori dall'Unione Europea</a></li>
+      <li><a href="#diritti">I tuoi diritti</a></li>
+      <li><a href="#sicurezza">Sicurezza</a></li>
+      <li><a href="#reclamo">Reclamo al Garante</a></li>
+      <li><a href="#modifiche">Modifiche</a></li>
+    </ol>
+  </div>
+
+  <h2 id="titolare">1. Chi tratta i tuoi dati</h2>
+  <p>Il titolare del trattamento è <strong>[Nome e Cognome]</strong>, che gestisce Solvia
+  come progetto personale, senza finalità commerciali.</p>
+  <p>Per qualsiasi questione relativa ai tuoi dati puoi scrivere a
+  <strong>[tua-email@esempio.it]</strong>. Rispondiamo entro un mese, come previsto dal GDPR.</p>
+  <p>Non è stato nominato un Responsabile della protezione dei dati (DPO): il progetto non
+  rientra nei casi in cui la nomina è obbligatoria.</p>
+
+  <h2 id="dati">2. Quali dati raccogliamo</h2>
+
+  <h3>Se crei un account</h3>
+  <ul>
+    <li><strong>Dati di registrazione:</strong> indirizzo email, nome, ed eventualmente
+    nome dell'attività, partita IVA e indirizzo se scegli di inserirli.</li>
+    <li><strong>Password:</strong> non viene mai conservata in chiaro. Custodiamo solo
+    un'impronta crittografica (bcrypt) da cui non è possibile risalire alla password
+    originale — nemmeno da parte di chi amministra il server.</li>
+    <li><strong>Contenuti che inserisci tu:</strong> anagrafica clienti, preventivi,
+    fatture, attività ed email che carichi nell'applicazione. Questi contenuti sono
+    tuoi: non li leggiamo, non li analizziamo per finalità nostre e non li cediamo
+    a nessuno.</li>
+  </ul>
+
+  <h3>Se visiti il sito</h3>
+  <ul>
+    <li><strong>Statistiche in casa, senza cookie.</strong> Registriamo l'apertura delle
+    pagine pubbliche, il dominio da cui arrivi (per esempio "google.com", mai l'indirizzo
+    completo con la ricerca che avevi digitato) e i clic sui pulsanti principali. Serve a
+    capire quali parti del sito funzionano e quali no.</li>
+    <li><strong>Il tuo indirizzo IP non viene conservato.</strong> Da IP e browser si
+    calcola un'impronta crittografica con un elemento segreto che cambia ogni giorno:
+    permette di contare quante persone diverse sono passate oggi, e nient'altro. Domani
+    la stessa persona è un'impronta differente, quindi non è possibile seguirla nel tempo
+    né collegarla a un'identità — nemmeno da parte di chi amministra il server.</li>
+    <li><strong>Nessuno strumento di terze parti.</strong> I dati restano sul nostro
+    server: non c'è Google Analytics, non ci sono pixel pubblicitari, nulla viene ceduto
+    o venduto.</li>
+    <li><strong>Rispettiamo il tuo rifiuto.</strong> Se il tuo browser invia "Do Not Track"
+    o il Global Privacy Control, non registriamo nulla del tuo passaggio.</li>
+    <li>Le statistiche vengono cancellate automaticamente dopo dodici mesi.</li>
+  </ul>
+
+  <h3>Se ti iscrivi alla newsletter</h3>
+  <ul>
+    <li>Indirizzo email e, facoltativamente, il nome.</li>
+    <li><strong>Prova del consenso:</strong> data e ora dell'iscrizione, indirizzo IP,
+    browser utilizzato e testo esatto del consenso prestato. Serve a dimostrare che
+    l'iscrizione è stata richiesta davvero da te, come richiede il GDPR.</li>
+    <li>Data della conferma e, se ti disiscrivi, data della disiscrizione.</li>
+  </ul>
+
+  <h3>Dati tecnici</h3>
+  <ul>
+    <li>Un <strong>cookie tecnico di sessione</strong> che ti tiene collegato. Non serve
+    a profilarti. Dettagli nella <a href="/cookie.html">cookie policy</a>.</li>
+    <li>I normali log del server (indirizzo IP, data e ora, pagina richiesta), generati
+    automaticamente e necessari al funzionamento e alla sicurezza.</li>
+  </ul>
+
+  <div class="callout">
+    <p><strong>Cosa non facciamo.</strong> Nessun sistema di tracciamento pubblicitario,
+    nessuna profilazione, nessuna vendita o cessione di dati a terzi, nessuna decisione
+    automatizzata che produca effetti giuridici su di te.</p>
+  </div>
+
+  <h2 id="finalita">3. Perché li trattiamo</h2>
+  <table>
+    <thead><tr><th>Finalità</th><th>Base giuridica</th></tr></thead>
+    <tbody>
+      <tr><td>Creare e gestire il tuo account, farti usare l'applicazione</td>
+          <td>Esecuzione del contratto — art. 6(1)(b)</td></tr>
+      <tr><td>Conservare i contenuti che inserisci (clienti, documenti, attività)</td>
+          <td>Esecuzione del contratto — art. 6(1)(b)</td></tr>
+      <tr><td>Inviarti la newsletter</td>
+          <td>Tuo consenso — art. 6(1)(a), revocabile in ogni momento</td></tr>
+      <tr><td>Conservare la prova del consenso alla newsletter</td>
+          <td>Obbligo di rendicontazione — art. 5(2) e art. 7(1)</td></tr>
+      <tr><td>Sicurezza del servizio e prevenzione degli abusi</td>
+          <td>Legittimo interesse — art. 6(1)(f)</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="conservazione">4. Per quanto tempo li conserviamo</h2>
+  <ul>
+    <li><strong>Dati dell'account e contenuti:</strong> finché tieni l'account attivo.
+    Quando lo elimini, vengono cancellati immediatamente e in modo irreversibile.</li>
+    <li><strong>Iscrizione alla newsletter:</strong> finché resti iscritto. Se ti
+    disiscrivi, manteniamo l'indirizzo in un elenco di esclusione per non riscriverti
+    per errore; puoi chiedere la cancellazione totale dal link nella pagina di
+    disiscrizione.</li>
+    <li><strong>Iscrizioni mai confermate:</strong> restano in sospeso e non ricevono
+    alcuna comunicazione.</li>
+    <li><strong>Log del server:</strong> tempo tecnico necessario, di norma pochi giorni.</li>
+  </ul>
+
+  <h2 id="destinatari">5. Chi altro li vede</h2>
+  <p>Nessuno, salvo i fornitori tecnici indispensabili al funzionamento, che agiscono
+  come responsabili del trattamento e solo secondo le nostre istruzioni:</p>
+  <ul>
+    <li><strong>Fornitore di hosting</strong> — <em>[nome del servizio di hosting]</em> —
+    ospita l'applicazione e il database.</li>
+    <li><strong>Servizio di invio email</strong> — <em>[nome del servizio SMTP]</em> —
+    recapita le email di conferma e la newsletter. Attivo solo se l'invio email è configurato.</li>
+    <li><strong>Anthropic</strong> — solo se l'assistente con modello linguistico è
+    attivato dall'amministratore. In quel caso il testo delle email che analizzi viene
+    inviato per l'elaborazione. <strong>Nella configurazione predefinita questa funzione
+    è spenta</strong> e l'assistente lavora con regole locali, senza che nessun dato
+    esca dal server.</li>
+  </ul>
+
+  <h2 id="trasferimenti">6. Trasferimenti fuori dall'Unione Europea</h2>
+  <p>Se un fornitore tra quelli sopra elencati tratta dati fuori dallo Spazio Economico
+  Europeo, il trasferimento avviene sulla base delle Clausole Contrattuali Standard
+  approvate dalla Commissione Europea o di una decisione di adeguatezza. Puoi chiederci
+  copia delle garanzie applicate scrivendo all'indirizzo indicato al punto 1.</p>
+
+  <h2 id="diritti">7. I tuoi diritti</h2>
+  <p>Il GDPR ti riconosce il diritto di <strong>accedere</strong> ai tuoi dati (art. 15),
+  <strong>rettificarli</strong> (art. 16), <strong>cancellarli</strong> (art. 17),
+  <strong>limitarne</strong> il trattamento (art. 18), <strong>riceverli</strong> in
+  formato leggibile e trasferibile (art. 20), <strong>opporti</strong> al trattamento
+  fondato sul legittimo interesse (art. 21) e <strong>revocare il consenso</strong>
+  in qualsiasi momento (art. 7).</p>
+
+  <div class="callout">
+    <p><strong>Non devi scrivere a nessuno per esercitarli.</strong> Dentro l'applicazione,
+    in <em>Impostazioni → I tuoi dati</em>, trovi due pulsanti: <em>Scarica i miei dati</em>,
+    che ti restituisce tutto in un file leggibile, e <em>Elimina account</em>, che cancella
+    tutto in modo definitivo. Per la newsletter, il link di disiscrizione è in fondo a ogni
+    email e funziona con un clic solo.</p>
+  </div>
+
+  <h2 id="sicurezza">8. Sicurezza</h2>
+  <ul>
+    <li>Password protette con bcrypt, mai leggibili in chiaro.</li>
+    <li>Sessioni gestite con cookie <code>httpOnly</code>, non accessibili al codice
+    JavaScript della pagina, per ridurre il rischio di furto della sessione. Al cambio
+    password tutte le sessioni aperte altrove decadono automaticamente.</li>
+    <li><strong>Recupero password:</strong> il link inviato per email vale un'ora e una
+    volta sola. Nel database non finisce il link, ma solo la sua impronta crittografica:
+    nemmeno chi leggesse la tabella potrebbe usarlo per entrare.</li>
+    <li><strong>Tentativi di accesso:</strong> dopo cinque password sbagliate di seguito
+    l'accesso a quell'account viene sospeso per quindici minuti. Il conteggio sta in
+    memoria, non viene salvato e non produce alcun profilo dell'utente.</li>
+    <li>Tutte le interrogazioni al database usano parametri separati dal codice, per
+    prevenire attacchi di tipo SQL injection.</li>
+    <li>Ogni dato è isolato per utente: nessun account può accedere ai contenuti di un
+    altro, e questa separazione è verificata da test automatici a ogni modifica del codice.</li>
+    <li>In produzione il sito va servito esclusivamente via HTTPS.</li>
+    <li>Le statistiche di visita non contengono indirizzi IP: solo impronte
+    crittografiche a validità giornaliera, non riconducibili a una persona.</li>
+  </ul>
+
+  <h2 id="reclamo">9. Reclamo al Garante</h2>
+  <p>Se ritieni che il trattamento dei tuoi dati violi il GDPR, puoi proporre reclamo al
+  <strong>Garante per la protezione dei dati personali</strong> (Piazza Venezia 11, 00187
+  Roma — <a href="https://www.garanteprivacy.it" target="_blank" rel="noopener">garanteprivacy.it</a>),
+  fermo restando ogni altra azione in sede giudiziaria.</p>
+
+  <h2 id="modifiche">10. Modifiche</h2>
+  <p>Se questa informativa cambia, aggiorniamo la data in cima alla pagina. Se le
+  modifiche riguardano in modo sostanziale il trattamento dei tuoi dati, te lo comunichiamo
+  via email prima che diventino efficaci.</p>
+</main>
+
+<footer class="page-foot">
+  <div style="margin-bottom:10px">
+    <a href="/privacy.html">Privacy</a>
+    <a href="/cookie.html">Cookie</a>
+    <a href="/termini.html">Termini d'uso</a>
+    <a href="/#newsletter">Newsletter</a>
+  </div>
+  Solvia — servizio fornito da [Nome e Cognome]
+</footer>
+
+</body>
+</html>

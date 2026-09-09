@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pagamento (simulazione) — Solvia</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  body{display:flex;align-items:center;justify-content:center;padding:24px;min-height:100vh;}
+  .pay{width:100%;max-width:940px;display:grid;grid-template-columns:1fr 1fr;gap:0;
+       background:var(--surface);border:1px solid var(--border);border-radius:18px;
+       overflow:hidden;box-shadow:var(--shadow);}
+  @media (max-width:820px){.pay{grid-template-columns:1fr;}}
+  .pay-left{padding:36px;border-right:1px solid var(--border);background:var(--bg);}
+  .pay-right{padding:36px;}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;margin-bottom:28px;}
+  .brand svg{width:28px;height:28px;border-radius:8px;}
+  .amount{font-size:38px;font-weight:800;letter-spacing:-.02em;}
+  .amount span{font-size:16px;font-weight:500;color:var(--muted);}
+  .plan-name{font-size:14px;color:var(--muted);font-weight:600;margin-bottom:4px;}
+  .feat{list-style:none;margin-top:24px;}
+  .feat li{font-size:13.5px;padding:6px 0 6px 24px;position:relative;color:var(--ink-2);}
+  .feat li::before{content:"✓";position:absolute;left:0;color:var(--accent);font-weight:700;}
+  .sim-banner{background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:12px 14px;
+              font-size:12.5px;line-height:1.6;margin-bottom:22px;font-weight:500;}
+  .card-row{display:flex;gap:10px;}
+  .card-row>*{flex:1;}
+  .secure{display:flex;align-items:center;justify-content:center;gap:6px;
+          font-size:12px;color:var(--muted);margin-top:16px;}
+  .cancel{display:block;text-align:center;margin-top:16px;font-size:13.5px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="pay">
+  <div class="pay-left">
+    <div class="brand">
+      <svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg>
+      Solvia
+    </div>
+    <div class="plan-name" id="plan-name">Piano</div>
+    <div class="amount" id="plan-price">—<span> / mese</span></div>
+    <ul class="feat" id="plan-features"></ul>
+  </div>
+
+  <div class="pay-right">
+    <div class="sim-banner">
+      <strong>Simulazione.</strong> Stripe non è ancora configurato, quindi nessun importo
+      viene addebitato e questi campi non vengono inviati da nessuna parte. Serve a provare
+      il flusso completo: pagamento, sblocco delle funzioni e disdetta.
+    </div>
+
+    <div class="alert alert-error" id="err"></div>
+
+    <div class="field">
+      <label>Email</label>
+      <input class="input" id="p-email" value="" readonly>
+    </div>
+    <div class="field">
+      <label>Numero carta</label>
+      <input class="input" id="p-card" value="4242 4242 4242 4242" readonly>
+    </div>
+    <div class="card-row">
+      <div class="field"><label>Scadenza</label><input class="input" value="12 / 30" readonly></div>
+      <div class="field"><label>CVC</label><input class="input" value="123" readonly></div>
+    </div>
+    <div class="field">
+      <label>Intestatario</label>
+      <input class="input" id="p-name" value="" readonly>
+    </div>
+
+    <button class="btn btn-primary btn-block" id="p-pay">Attiva abbonamento</button>
+    <div class="secure">🔒 Pagamento simulato — nessun addebito reale</div>
+    <a class="cancel" href="/app#settings">Annulla e torna indietro</a>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const planId = params.get('piano') || 'pro';
+const err = document.getElementById('err');
+
+(async function init() {
+  const [me, state] = await Promise.all([
+    fetch('/api/auth/me').then((r) => r.json()),
+    fetch('/api/billing').then((r) => r.json()),
+  ]);
+  const plan = state.plans.find((p) => p.id === planId);
+  if (!plan) { location.href = '/app#settings'; return; }
+
+  document.getElementById('plan-name').textContent = `Piano ${plan.name}`;
+  document.getElementById('plan-price').innerHTML = `€${plan.price}<span> / mese</span>`;
+  document.getElementById('plan-features').innerHTML =
+    plan.features.map((f) => `<li>${f}</li>`).join('');
+  document.getElementById('p-email').value = me.user.email;
+  document.getElementById('p-name').value = me.user.business_name || me.user.name;
+})();
+
+document.getElementById('p-pay').addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Attivazione…';
+  try {
+    const res = await fetch('/api/billing/demo-attiva', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan: planId }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Attivazione non riuscita');
+    location.href = '/app#settings';
+  } catch (ex) {
+    err.textContent = ex.message;
+    err.classList.add('show');
+    btn.disabled = false;
+    btn.textContent = 'Attiva abbonamento';
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I tuoi documenti</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  body{background:#F1F5F9;padding:28px 16px;}
+  .wrap{max-width:780px;margin:0 auto;}
+  .head{background:var(--surface);border-radius:18px;padding:30px 34px;margin-bottom:18px;
+    box-shadow:0 4px 24px rgba(15,23,42,.07);}
+  .head h1{font-size:23px;font-weight:800;margin-bottom:6px;}
+  .head .sub{color:var(--muted);font-size:14px;}
+  .head .from{margin-top:18px;padding-top:16px;border-top:1px solid var(--border);
+    font-size:13px;color:var(--muted);line-height:1.7;}
+  @media (max-width:600px){.head{padding:24px 20px;}}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+  @media (max-width:600px){.stats{grid-template-columns:1fr;}}
+  .stat-box{background:var(--surface);border-radius:14px;padding:18px;}
+  .stat-box .k{font-size:12px;color:var(--muted);font-weight:600;margin-bottom:6px;}
+  .stat-box .v{font-size:21px;font-weight:800;}
+
+  .docs{background:var(--surface);border-radius:18px;overflow:hidden;
+    box-shadow:0 4px 24px rgba(15,23,42,.07);}
+  .docs h2{font-size:15px;font-weight:700;padding:20px 24px 14px;}
+  .doc-row{display:flex;align-items:center;gap:14px;padding:16px 24px;
+    border-top:1px solid var(--border);flex-wrap:wrap;}
+  .doc-row .main{flex:1;min-width:180px;}
+  .doc-row .num{font-weight:700;font-size:14.5px;}
+  .doc-row .meta{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .doc-row .amt{font-weight:700;font-size:15px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  @media (max-width:600px){.doc-row{padding:14px 20px;}}
+
+  .empty-box{padding:44px 24px;text-align:center;color:var(--muted);}
+  .foot{text-align:center;font-size:12.5px;color:var(--muted);margin-top:22px;}
+  .center-msg{max-width:460px;margin:80px auto;text-align:center;}
+</style>
+</head>
+<body>
+
+<div id="root"><div class="loading"><div class="spinner dark"></div></div></div>
+
+<script>
+var token = location.pathname.split('/').pop();
+var root = document.getElementById('root');
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function eur(n) {
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency', currency: 'EUR', useGrouping: true,
+  }).format(Number(n) || 0);
+}
+function dmy(iso) {
+  if (!iso) return '—';
+  var p = String(iso).slice(0, 10).split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+
+var BADGE = {
+  inviata: ['badge-blue', 'Inviata'],
+  pagata: ['badge-green', 'Pagata'],
+  accettata: ['badge-green', 'Accettato'],
+  rifiutata: ['badge-gray', 'Rifiutato'],
+};
+
+function statoBadge(doc) {
+  var oggi = new Date().toISOString().slice(0, 10);
+  if (doc.tipo === 'fattura' && doc.stato === 'inviata' && doc.scadenza && doc.scadenza < oggi) {
+    return '<span class="badge badge-red">Scaduta</span>';
+  }
+  var b = BADGE[doc.stato] || ['badge-gray', doc.stato];
+  return '<span class="badge ' + b[0] + '">' + b[1] + '</span>';
+}
+
+function render(d) {
+  var righe = d.documenti.length ? d.documenti.map(function (doc) {
+    return '<div class="doc-row">'
+      + '<div class="main">'
+        + '<div class="num">' + (doc.tipo === 'fattura' ? 'Fattura ' : 'Preventivo ')
+        + esc(doc.numero) + '</div>'
+        + '<div class="meta">Del ' + dmy(doc.data)
+        + (doc.scadenza ? ' · ' + (doc.tipo === 'fattura' ? 'scadenza ' : 'valido fino al ')
+            + dmy(doc.scadenza) : '') + '</div>'
+      + '</div>'
+      + statoBadge(doc)
+      + '<div class="amt">' + eur(doc.totale) + '</div>'
+      + (doc.link ? '<a class="btn btn-ghost btn-sm" href="' + esc(doc.link) + '">Apri</a>' : '')
+    + '</div>';
+  }).join('') : '<div class="empty-box">Non ci sono ancora documenti da mostrare.</div>';
+
+  root.innerHTML =
+    '<div class="wrap">'
+    + '<div class="head">'
+      + '<h1>Ciao ' + esc(d.cliente.nome) + '</h1>'
+      + '<div class="sub">Qui trovi tutti i documenti che ti riguardano, sempre aggiornati.</div>'
+      + '<div class="from">'
+        + esc(d.mittente.nome)
+        + (d.mittente.partitaIva ? '<br>P. IVA ' + esc(d.mittente.partitaIva) : '')
+        + (d.mittente.email ? '<br>' + esc(d.mittente.email) : '')
+      + '</div>'
+    + '</div>'
+
+    + '<div class="stats">'
+      + '<div class="stat-box"><div class="k">Fatture emesse</div><div class="v">'
+        + d.riepilogo.numeroFatture + '</div></div>'
+      + '<div class="stat-box"><div class="k">Totale fatturato</div><div class="v">'
+        + eur(d.riepilogo.totaleFatturato) + '</div></div>'
+      + '<div class="stat-box"><div class="k">Ancora da saldare</div><div class="v" style="color:'
+        + (d.riepilogo.daPagare > 0 ? 'var(--warn)' : 'var(--accent)') + '">'
+        + eur(d.riepilogo.daPagare) + '</div></div>'
+    + '</div>'
+
+    + '<div class="docs"><h2>Documenti</h2>' + righe + '</div>'
+    + '<div class="foot">Pagina riservata · nessuna registrazione necessaria</div>'
+    + '</div>';
+}
+
+(async function load() {
+  try {
+    var res = await fetch('/api/pubblico/cliente/' + encodeURIComponent(token));
+    if (!res.ok) {
+      root.innerHTML = '<div class="center-msg">'
+        + '<h1 style="font-size:22px;font-weight:800;margin-bottom:10px">Pagina non disponibile</h1>'
+        + '<p style="color:var(--muted)">Il link non è valido o è stato revocato. '
+        + 'Chiedi a chi te l\'ha mandato di rigenerarlo.</p></div>';
+      return;
+    }
+    render(await res.json());
+  } catch (e) {
+    root.innerHTML = '<div class="center-msg"><p style="color:var(--muted)">'
+      + 'Non riesco a caricare la pagina. Riprova tra poco.</p></div>';
+  }
+})();
+</script>
+</body>
+</html>

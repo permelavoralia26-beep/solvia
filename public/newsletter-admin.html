@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newsletter — Solvia</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  .wrap{max-width:1100px;margin:0 auto;padding:24px;}
+  .topnav{background:var(--surface);border-bottom:1px solid var(--border);
+    position:sticky;top:0;z-index:20;}
+  .topnav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 24px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;}
+  .brand svg{width:30px;height:30px;border-radius:8px;}
+  .tabbar{display:flex;gap:6px;background:var(--bg);padding:4px;border-radius:10px;margin-bottom:22px;}
+  .tabbar button{flex:1;padding:9px;border:none;background:none;border-radius:7px;
+    font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;}
+  .tabbar button.active{background:var(--surface);color:var(--primary);
+    box-shadow:0 1px 3px rgba(15,23,42,.08);}
+  .panel{display:none;} .panel.active{display:block;}
+  .eml{background:var(--bg);border:1px solid var(--border);border-radius:10px;
+    padding:14px 16px;margin-bottom:10px;}
+  .eml-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+  .eml pre{white-space:pre-wrap;font-family:inherit;font-size:13px;color:var(--ink-2);
+    line-height:1.65;margin:0;max-height:150px;overflow:auto;}
+</style>
+</head>
+<body>
+
+<div class="topnav">
+  <div class="wrap">
+    <a class="brand" href="/app"><svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg> Newsletter</a>
+    <div style="display:flex;gap:10px;align-items:center">
+      <span class="mode-tag" id="mail-mode">—</span>
+      <a class="btn btn-ghost btn-sm" href="/app">← Torna all'app</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="grid grid-stats" style="margin-bottom:22px">
+    <div class="stat"><div class="stat-label">Iscritti confermati</div>
+      <div class="stat-value" id="s-confirmed">—</div>
+      <div class="stat-note">ricevono la newsletter</div></div>
+    <div class="stat"><div class="stat-label">In attesa di conferma</div>
+      <div class="stat-value" id="s-pending">—</div>
+      <div class="stat-note">non hanno ancora cliccato</div></div>
+    <div class="stat"><div class="stat-label">Disiscritti</div>
+      <div class="stat-value" id="s-unsub">—</div>
+      <div class="stat-note">esclusi dagli invii</div></div>
+    <div class="stat"><div class="stat-label">Campagne inviate</div>
+      <div class="stat-value" id="s-campaigns">—</div>
+      <div class="stat-note">totale storico</div></div>
+  </div>
+
+  <div id="outbox-banner"></div>
+
+  <div class="tabbar">
+    <button class="active" data-tab="scrivi">Scrivi</button>
+    <button data-tab="campagne">Campagne</button>
+    <button data-tab="iscritti">Iscritti</button>
+    <button data-tab="inviate">Email inviate</button>
+  </div>
+
+  <!-- Scrivi -->
+  <div class="panel active" id="p-scrivi">
+    <div class="card">
+      <div class="card-head"><h2 id="editor-title">Nuova newsletter</h2>
+        <button class="link" id="new-campaign" style="display:none">+ Nuova</button></div>
+      <div class="alert alert-error" id="err"></div>
+      <div class="alert alert-ok" id="ok"></div>
+
+      <div class="field"><label>Oggetto</label>
+        <input class="input" id="c-subject" placeholder="Es. Solvia — cosa è cambiato questo mese"></div>
+      <div class="field"><label>Testo</label>
+        <textarea class="input" id="c-body" style="min-height:280px"
+          placeholder="Scrivi qui. Il saluto iniziale con il nome e il link di disiscrizione vengono aggiunti automaticamente a ogni email."></textarea>
+        <p class="hint">In fondo a ogni email vengono aggiunti automaticamente il motivo per cui
+        la persona la riceve e il link di disiscrizione: sono obbligatori e non vanno rimossi.</p></div>
+
+      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:6px">
+        <button class="btn btn-primary" id="save">Salva bozza</button>
+        <button class="btn btn-ghost" id="send-test">Invia prova a me</button>
+        <button class="btn btn-ghost" id="send-all" disabled>Invia a tutti gli iscritti</button>
+      </div>
+      <p class="hint" id="send-hint" style="margin-top:12px">Salva la bozza per poterla inviare.</p>
+    </div>
+  </div>
+
+  <!-- Campagne -->
+  <div class="panel" id="p-campagne">
+    <div class="card"><div class="card-head"><h2>Campagne</h2></div>
+      <div id="campaigns-list"></div></div>
+  </div>
+
+  <!-- Iscritti -->
+  <div class="panel" id="p-iscritti">
+    <div class="card"><div class="card-head"><h2>Iscritti</h2>
+      <button class="link" id="export-csv">Esporta CSV</button></div>
+      <div class="table-wrap" id="subs-list"></div></div>
+  </div>
+
+  <!-- Email inviate -->
+  <div class="panel" id="p-inviate">
+    <div class="card"><div class="card-head"><h2>Email registrate</h2></div>
+      <div id="outbox-list"></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let data = null;
+let editingId = null;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) =>
+  ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+let toastTimer;
+function toast(m) {
+  const el = $('toast'); el.textContent = m; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
+function showErr(m) { $('err').textContent = m; $('err').classList.add('show'); $('ok').classList.remove('show'); }
+function showOk(m) { $('ok').textContent = m; $('ok').classList.add('show'); $('err').classList.remove('show'); }
+function clearMsg() { $('err').classList.remove('show'); $('ok').classList.remove('show'); }
+
+async function api(path, options = {}) {
+  const res = await fetch('/api/newsletter' + path, {
+    headers: { 'Content-Type': 'application/json' },
+    ...options,
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  if (res.status === 401) { location.href = '/accedi'; throw new Error('Non autenticato'); }
+  if (res.status === 403) { location.href = '/app'; throw new Error('Non autorizzato'); }
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok && !json.error) throw new Error('Errore imprevisto');
+  return json;
+}
+
+const dt = (v) => {
+  if (!v) return '—';
+  const [d, t] = String(v).split(' ');
+  const [y, m, dd] = d.split('-');
+  return dd + '/' + m + '/' + y + (t ? ' ' + t.slice(0, 5) : '');
+};
+
+const STATUS = {
+  confermato: ['badge-green', 'Confermato'],
+  in_attesa: ['badge-amber', 'In attesa'],
+  disiscritto: ['badge-gray', 'Disiscritto'],
+};
+
+async function load() {
+  data = await api('/admin/overview');
+
+  $('s-confirmed').textContent = data.stats.confirmed || 0;
+  $('s-pending').textContent = data.stats.pending || 0;
+  $('s-unsub').textContent = data.stats.unsubscribed || 0;
+  $('s-campaigns').textContent = data.campaigns.filter((c) => c.status === 'inviata').length;
+
+  const tag = $('mail-mode');
+  tag.textContent = data.mailMode === 'smtp' ? 'Invio reale attivo' : 'Invio simulato';
+  tag.classList.toggle('live', data.mailMode === 'smtp');
+
+  $('outbox-banner').innerHTML = data.mailMode === 'smtp' ? '' :
+    '<div class="card" style="margin-bottom:22px;background:var(--warn-soft);border-color:#FDE68A">'
+    + '<p style="font-size:14px;color:var(--warn)"><strong>Invio email non configurato.</strong> '
+    + 'Le email non partono davvero: vengono registrate e le trovi nella scheda '
+    + '<em>Email inviate</em>, così puoi controllare il testo prima di collegare un servizio reale. '
+    + 'Per attivare gli invii imposta le variabili <code>SMTP_HOST</code>, <code>SMTP_USER</code> '
+    + 'e <code>SMTP_PASS</code>.</p></div>';
+
+  renderCampaigns();
+  renderSubs();
+  renderOutbox();
+}
+
+function renderCampaigns() {
+  const el = $('campaigns-list');
+  if (!data.campaigns.length) {
+    el.innerHTML = '<p class="cell-muted" style="padding:18px 0">Nessuna campagna ancora. Scrivi la prima dalla scheda "Scrivi".</p>';
+    return;
+  }
+  el.innerHTML = '<table><thead><tr><th>Oggetto</th><th>Stato</th><th>Creata</th>'
+    + '<th class="num">Inviate</th><th class="num">Azioni</th></tr></thead><tbody>'
+    + data.campaigns.map((c) =>
+      '<tr><td class="cell-strong">' + esc(c.subject) + '</td>'
+      + '<td><span class="badge ' + (c.status === 'inviata' ? 'badge-green' : 'badge-gray') + '">'
+      + (c.status === 'inviata' ? 'Inviata' : 'Bozza') + '</span></td>'
+      + '<td class="cell-muted">' + dt(c.created_at) + '</td>'
+      + '<td class="num">' + (c.status === 'inviata' ? c.sent_count : '—') + '</td>'
+      + '<td><div class="row-actions">'
+      + (c.status === 'bozza'
+          ? '<button class="btn btn-ghost btn-sm" data-edit="' + c.id + '">Modifica</button>'
+            + '<button class="btn btn-danger btn-sm" data-del="' + c.id + '">Elimina</button>'
+          : '<button class="btn btn-ghost btn-sm" data-view="' + c.id + '">Vedi</button>')
+      + '</div></td></tr>').join('')
+    + '</tbody></table>';
+
+  el.querySelectorAll('[data-edit]').forEach((b) =>
+    b.addEventListener('click', () => editCampaign(Number(b.dataset.edit))));
+  el.querySelectorAll('[data-view]').forEach((b) =>
+    b.addEventListener('click', () => editCampaign(Number(b.dataset.view), true)));
+  el.querySelectorAll('[data-del]').forEach((b) =>
+    b.addEventListener('click', async () => {
+      await api('/admin/campaigns/' + b.dataset.del, { method: 'DELETE' });
+      toast('Campagna eliminata'); await load();
+    }));
+}
+
+function renderSubs() {
+  const el = $('subs-list');
+  if (!data.subscribers.length) {
+    el.innerHTML = '<p class="cell-muted" style="padding:18px 0">Nessun iscritto ancora.</p>';
+    return;
+  }
+  el.innerHTML = '<table><thead><tr><th>Email</th><th>Nome</th><th>Stato</th>'
+    + '<th>Iscritto</th><th>Confermato</th></tr></thead><tbody>'
+    + data.subscribers.map((s) => {
+        const st = STATUS[s.status] || ['badge-gray', s.status];
+        return '<tr><td class="cell-strong">' + esc(s.email) + '</td>'
+          + '<td>' + esc(s.name || '—') + '</td>'
+          + '<td><span class="badge ' + st[0] + '">' + st[1] + '</span></td>'
+          + '<td class="cell-muted">' + dt(s.created_at) + '</td>'
+          + '<td class="cell-muted">' + dt(s.confirmed_at) + '</td></tr>';
+      }).join('')
+    + '</tbody></table>';
+}
+
+function renderOutbox() {
+  const el = $('outbox-list');
+  if (data.mailMode === 'smtp') {
+    el.innerHTML = '<p class="cell-muted" style="padding:18px 0">L\'invio reale è attivo: '
+      + 'le email partono verso i destinatari e non vengono archiviate qui. '
+      + 'Controlla lo storico dal pannello del tuo servizio SMTP.</p>';
+    return;
+  }
+  if (!data.outbox.length) {
+    el.innerHTML = '<p class="cell-muted" style="padding:18px 0">Nessuna email registrata finora.</p>';
+    return;
+  }
+  el.innerHTML = data.outbox.map((m) =>
+    '<div class="eml"><div class="eml-head">'
+    + '<strong style="font-size:14px">' + esc(m.subject) + '</strong>'
+    + '<span class="cell-muted" style="font-size:12.5px">' + esc(m.to) + '</span></div>'
+    + '<pre>' + esc(m.body.trim()) + '</pre></div>').join('');
+}
+
+function editCampaign(id, readonly) {
+  const c = data.campaigns.find((x) => x.id === id);
+  if (!c) return;
+  editingId = readonly ? null : id;
+  $('c-subject').value = c.subject;
+  $('c-body').value = c.body;
+  $('c-subject').readOnly = Boolean(readonly);
+  $('c-body').readOnly = Boolean(readonly);
+  $('editor-title').textContent = readonly ? 'Campagna inviata (sola lettura)' : 'Modifica bozza';
+  $('new-campaign').style.display = 'inline';
+  $('save').style.display = readonly ? 'none' : '';
+  $('send-all').disabled = readonly || !editingId;
+  $('send-hint').textContent = readonly
+    ? 'Questa campagna è già stata inviata e non si può modificare.'
+    : 'Bozza salvata: puoi inviarla.';
+  switchTab('scrivi');
+  clearMsg();
+}
+
+function resetEditor() {
+  editingId = null;
+  $('c-subject').value = ''; $('c-body').value = '';
+  $('c-subject').readOnly = false; $('c-body').readOnly = false;
+  $('editor-title').textContent = 'Nuova newsletter';
+  $('new-campaign').style.display = 'none';
+  $('save').style.display = '';
+  $('send-all').disabled = true;
+  $('send-hint').textContent = 'Salva la bozza per poterla inviare.';
+  clearMsg();
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tabbar button').forEach((b) =>
+    b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.panel').forEach((p) =>
+    p.classList.toggle('active', p.id === 'p-' + name));
+}
+
+document.querySelectorAll('.tabbar button').forEach((b) =>
+  b.addEventListener('click', () => switchTab(b.dataset.tab)));
+$('new-campaign').addEventListener('click', resetEditor);
+
+$('save').addEventListener('click', async () => {
+  clearMsg();
+  const body = { subject: $('c-subject').value, body: $('c-body').value };
+  const result = editingId
+    ? await api('/admin/campaigns/' + editingId, { method: 'PUT', body })
+    : await api('/admin/campaigns', { method: 'POST', body });
+
+  if (!result.ok) return showErr(result.error);
+  editingId = result.campaign.id;
+  $('send-all').disabled = false;
+  $('send-hint').textContent = 'Bozza salvata: puoi inviarla.';
+  $('new-campaign').style.display = 'inline';
+  showOk('Bozza salvata.');
+  await load();
+});
+
+$('send-test').addEventListener('click', async () => {
+  clearMsg();
+  if (!editingId) return showErr('Salva prima la bozza.');
+  const me = await (await fetch('/api/auth/me')).json();
+  const result = await api('/admin/campaigns/' + editingId + '/send', {
+    method: 'POST', body: { testTo: me.user.email },
+  });
+  if (!result.ok) return showErr(result.error);
+  showOk('Email di prova inviata a ' + me.user.email + '.');
+  await load();
+});
+
+$('send-all').addEventListener('click', async () => {
+  clearMsg();
+  if (!editingId) return showErr('Salva prima la bozza.');
+  const n = data.stats.confirmed || 0;
+  if (!confirm('Inviare questa newsletter a ' + n + ' iscritti confermati?\n\nL’operazione non è annullabile.')) return;
+
+  const btn = $('send-all');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Invio…';
+  const result = await api('/admin/campaigns/' + editingId + '/send', { method: 'POST', body: {} });
+  btn.innerHTML = 'Invia a tutti gli iscritti';
+
+  if (!result.ok) { showErr(result.error); btn.disabled = false; return; }
+  showOk('Inviata a ' + result.sent + ' iscritti' + (result.failed ? ' — ' + result.failed + ' non riuscite.' : '.'));
+  resetEditor();
+  await load();
+});
+
+$('export-csv').addEventListener('click', () => {
+  const rows = [['email', 'nome', 'stato', 'iscritto_il', 'confermato_il']].concat(
+    data.subscribers.map((s) => [s.email, s.name || '', s.status, s.created_at, s.confirmed_at || '']));
+  const csv = rows.map((r) => r.map((v) => '"' + String(v).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  const a = document.createElement('a');
+  a.href = url; a.download = 'iscritti-newsletter.csv'; a.click();
+  URL.revokeObjectURL(url);
+});
+
+load().catch((e) => toast(e.message));
+</script>
+</body>
+</html>

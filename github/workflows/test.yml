@@ -1,0 +1,81 @@
+name: Test
+
+# Esegue i test a ogni push e a ogni pull request.
+# Se qualcosa si rompe, GitHub lo segnala prima che il codice finisca online.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepara Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Installa le dipendenze
+        run: npm ci
+
+      - name: Controllo sintassi
+        run: npm run test:syntax
+
+      - name: Avvia il server
+        run: |
+          npm start > server.log 2>&1 &
+          for i in $(seq 1 40); do
+            curl -sf http://localhost:3000/api/health > /dev/null && exit 0
+            sleep 1
+          done
+          echo "Il server non è partito:"; cat server.log; exit 1
+
+      - name: Test API
+        run: npm run test:api
+
+      - name: Test primo accesso e sicurezza account
+        run: npm run test:account
+
+      - name: Test studio condiviso
+        run: npm run test:studio
+
+      - name: Test statistiche e direzione
+        run: npm run test:direzione
+
+      - name: Test pre-lancio
+        run: npm run test:prelancio
+
+      - name: Test newsletter e GDPR
+        run: npm run test:newsletter
+
+      - name: Test abbonamenti e limiti
+        run: npm run test:billing
+
+      - name: Test funzioni Pro
+        run: npm run test:pro
+
+      - name: Test ore, portale, firma e riepilogo
+        run: npm run test:extra
+
+      - name: Test diagnostica configurazione
+        run: npm run test:diagnostica
+
+      - name: Test controllo prima del volo
+        run: npm run test:controllo
+
+      - name: Test sondaggio sul prezzo
+        run: npm run test:sondaggio
+
+      - name: Test webhook Stripe
+        run: npm run test:webhook
+
+      - name: Log del server in caso di errore
+        if: failure()
+        run: cat server.log || true

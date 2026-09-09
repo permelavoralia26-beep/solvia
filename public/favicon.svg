@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="solviaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#solviaGrad)"/>
+  <path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#ffffff"/>
+  <circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/>
+</svg>

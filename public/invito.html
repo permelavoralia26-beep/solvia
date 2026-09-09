@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invito allo studio — Solvia</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#4F46E5">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  body{display:flex;align-items:center;justify-content:center;padding:24px;
+       background:linear-gradient(160deg,#EEF2FF 0%,#F8FAFC 45%);}
+  .auth{width:100%;max-width:440px;}
+  .auth-brand{display:flex;align-items:center;justify-content:center;gap:10px;
+              font-weight:800;font-size:24px;margin-bottom:8px;}
+  .auth-brand svg{width:38px;height:38px;border-radius:10px;}
+  .auth-sub{text-align:center;color:var(--muted);font-size:14.5px;margin-bottom:26px;}
+  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;
+             padding:28px;box-shadow:var(--shadow);}
+  .studio-nome{background:var(--primary-soft);border-radius:12px;padding:16px 18px;
+               margin-bottom:22px;}
+  .studio-nome strong{display:block;font-size:17px;margin-bottom:3px;}
+  .studio-nome span{font-size:13.5px;color:var(--ink-2);line-height:1.6;}
+  .back{display:block;text-align:center;margin-top:20px;font-size:13.5px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="auth">
+  <div class="auth-brand">
+    <svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="#4F46E5"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg>
+    Solvia
+  </div>
+  <p class="auth-sub">Sei stato invitato in uno studio</p>
+
+  <div class="auth-card">
+    <div class="alert alert-error" id="err"></div>
+
+    <div id="caricamento" class="loading"><div class="spinner dark"></div></div>
+
+    <div id="valido" class="hidden">
+      <div class="studio-nome">
+        <strong id="s-nome"></strong>
+        <span><span id="s-invitante"></span> ti ha invitato a lavorare qui.
+        Entrando vedrai gli stessi clienti, preventivi e fatture dello studio, e ogni cosa
+        che farai resterà firmata col tuo nome.</span>
+      </div>
+
+      <form id="form">
+        <div class="field">
+          <label for="email">Il tuo indirizzo</label>
+          <input class="input" type="email" id="email" disabled>
+          <p class="hint">L'invito vale solo per questo indirizzo.</p>
+        </div>
+        <div class="field">
+          <label for="nome">Nome e cognome</label>
+          <input class="input" type="text" id="nome" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="pass">Scegli una password</label>
+          <input class="input" type="password" id="pass" autocomplete="new-password" required minlength="8">
+          <p class="hint">Almeno 8 caratteri. Sarà solo tua: il titolare non la vede.</p>
+        </div>
+        <button class="btn btn-primary btn-block" type="submit" id="entra">Entra nello studio</button>
+      </form>
+    </div>
+
+    <div id="scaduto" class="hidden">
+      <p style="font-size:14.5px;line-height:1.65;color:var(--ink-2)">
+        Questo invito non è più valido: vale 72 ore, e una volta sola. Può anche essere
+        stato revocato dal titolare, o l'indirizzo può avere già un account Solvia.
+      </p>
+      <p style="font-size:14.5px;line-height:1.65;color:var(--ink-2);margin-top:12px">
+        Chiedi al titolare dello studio di mandartene uno nuovo.
+      </p>
+      <a class="btn btn-ghost btn-block" href="/" style="margin-top:18px">Vai al sito</a>
+    </div>
+  </div>
+
+  <a class="back" href="/accedi">Hai già un account? Accedi</a>
+</div>
+
+<script>
+const err = document.getElementById('err');
+const showErr = (m) => { err.textContent = m; err.classList.add('show'); };
+const mostra = (id) => document.getElementById(id).classList.remove('hidden');
+const nascondi = (id) => document.getElementById(id).classList.add('hidden');
+
+const token = new URLSearchParams(window.location.search).get('token') || '';
+
+(async function verifica() {
+  try {
+    const res = await fetch('/api/studio/invito?token=' + encodeURIComponent(token));
+    const d = await res.json();
+    nascondi('caricamento');
+    if (!d.valido) return mostra('scaduto');
+
+    document.getElementById('s-nome').textContent = d.studio;
+    document.getElementById('s-invitante').textContent = d.invitatoDa;
+    document.getElementById('email').value = d.email;
+    mostra('valido');
+  } catch {
+    nascondi('caricamento');
+    mostra('scaduto');
+  }
+})();
+
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  err.classList.remove('show');
+  const btn = document.getElementById('entra');
+  btn.disabled = true;
+  btn.textContent = 'Ti sto facendo entrare…';
+  try {
+    const res = await fetch('/api/studio/invito/accetta', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token,
+        name: document.getElementById('nome').value.trim(),
+        password: document.getElementById('pass').value,
+      }),
+    });
+    const d = await res.json();
+    if (!res.ok) throw new Error(d.error || 'Operazione non riuscita');
+    window.location.href = '/app';
+  } catch (e2) {
+    showErr(e2.message);
+    btn.disabled = false;
+    btn.textContent = 'Entra nello studio';
+  }
+});
+</script>
+</body>
+</html>

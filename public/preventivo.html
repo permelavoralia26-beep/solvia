@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preventivo</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  body{background:#F1F5F9;padding:32px 16px;}
+  .sheet{max-width:760px;margin:0 auto;background:var(--surface);border-radius:18px;
+    box-shadow:0 4px 24px rgba(15,23,42,.08);overflow:hidden;}
+  .sheet-head{padding:34px 40px;border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  .from-name{font-size:19px;font-weight:800;margin-bottom:4px;}
+  .from-meta{font-size:13px;color:var(--muted);line-height:1.7;}
+  .doc-title{font-size:26px;font-weight:800;color:var(--primary);letter-spacing:-.01em;
+    text-align:right;margin-bottom:6px;}
+  .doc-meta{font-size:13px;color:var(--muted);text-align:right;line-height:1.8;}
+  @media (max-width:640px){.sheet-head{padding:26px 22px;}.doc-title,.doc-meta{text-align:left;}}
+
+  .to{padding:24px 40px;background:var(--bg);border-bottom:1px solid var(--border);}
+  .to-label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);
+    text-transform:uppercase;margin-bottom:6px;}
+  .to-name{font-size:16px;font-weight:700;}
+  .to-meta{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.6;}
+  @media (max-width:640px){.to{padding:20px 22px;}}
+
+  .body{padding:32px 40px;}
+  @media (max-width:640px){.body{padding:24px 22px;}}
+  .items{width:100%;border-collapse:collapse;margin-bottom:26px;}
+  .items th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--muted);font-weight:700;padding-bottom:10px;border-bottom:2px solid var(--border);}
+  .items td{padding:15px 0;border-bottom:1px solid var(--border);font-size:14.5px;vertical-align:top;}
+  .items .desc{font-weight:500;padding-right:16px;}
+  .items .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .items .amount{font-weight:700;}
+
+  .totals{margin-left:auto;max-width:320px;}
+  .totals .row{display:flex;justify-content:space-between;padding:7px 0;font-size:14.5px;color:var(--muted);}
+  .totals .row span:last-child{color:var(--ink);font-variant-numeric:tabular-nums;}
+  .totals .grand{border-top:2px solid var(--border);margin-top:8px;padding-top:14px;
+    font-size:21px;font-weight:800;color:var(--ink);}
+  .totals .grand span:last-child{color:var(--primary);}
+
+  .notes{margin-top:30px;padding:18px 20px;background:var(--bg);border-radius:12px;}
+  .notes h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);
+    margin-bottom:8px;font-weight:700;}
+  .notes p{font-size:14px;color:var(--ink-2);line-height:1.7;white-space:pre-wrap;}
+
+  .decide{padding:30px 40px;background:linear-gradient(135deg,#EEF2FF,#F5F3FF);
+    border-top:1px solid var(--border);}
+  @media (max-width:640px){.decide{padding:24px 22px;}}
+  .decide h2{font-size:19px;font-weight:800;margin-bottom:6px;}
+  .decide p{font-size:14px;color:var(--muted);margin-bottom:18px;}
+  .decide-actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn-accept{background:var(--accent);color:#fff;border:none;padding:14px 30px;
+    border-radius:999px;font-weight:700;font-size:15.5px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(13,148,136,.3);transition:.15s;}
+  .btn-accept:hover:not(:disabled){background:#0F766E;transform:translateY(-1px);}
+  .btn-decline{background:transparent;border:1.5px solid var(--border);color:var(--muted);
+    padding:14px 26px;border-radius:999px;font-weight:600;font-size:15px;cursor:pointer;}
+  .btn-decline:hover:not(:disabled){border-color:var(--danger);color:var(--danger);}
+  .note-field{margin-top:16px;display:none;}
+  .note-field.show{display:block;}
+
+  .outcome{padding:34px 40px;text-align:center;}
+  .outcome .mark{width:66px;height:66px;border-radius:50%;margin:0 auto 18px;
+    display:flex;align-items:center;justify-content:center;font-size:32px;}
+  .outcome .mark.ok{background:var(--accent-soft);color:#0F766E;}
+  .outcome .mark.no{background:#F1F5F9;color:var(--muted);}
+  .outcome h2{font-size:22px;font-weight:800;margin-bottom:8px;}
+  .outcome p{color:var(--muted);font-size:14.5px;line-height:1.7;}
+
+  .sheet-foot{padding:20px 40px;text-align:center;font-size:12.5px;color:var(--muted);
+    border-top:1px solid var(--border);}
+  .expired{background:var(--warn-soft);color:var(--warn);padding:12px 18px;border-radius:10px;
+    font-size:13.5px;font-weight:600;margin-bottom:20px;}
+  .center-msg{max-width:460px;margin:80px auto;text-align:center;}
+
+  /* Area di firma: pensata per il dito, non per il mouse */
+  .sign-wrap{margin-top:18px;}
+  .sign-label{font-size:13px;font-weight:600;color:var(--ink-2);margin-bottom:8px;display:block;}
+  .sign-pad{position:relative;background:#fff;border:2px dashed var(--border-strong);
+    border-radius:12px;height:170px;touch-action:none;overflow:hidden;}
+  .sign-pad canvas{display:block;width:100%;height:100%;}
+  .sign-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:14px;pointer-events:none;}
+  .sign-pad.drawn{border-style:solid;border-color:var(--accent);}
+  .sign-pad.drawn .sign-hint{display:none;}
+  .sign-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px;}
+  .sign-clear{background:none;border:none;color:var(--muted);font-size:13px;
+    cursor:pointer;text-decoration:underline;padding:4px;}
+  .signed-box{margin-top:22px;padding:18px 20px;background:var(--bg);border-radius:12px;text-align:left;}
+  .signed-box h3{font-size:11px;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--muted);margin-bottom:10px;font-weight:700;}
+  .signed-box img{max-width:260px;max-height:100px;display:block;margin-bottom:6px;}
+  .signed-box .who{font-size:13.5px;font-weight:600;}
+  .signed-box .when{font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div id="root">
+  <div class="loading"><div class="spinner dark"></div></div>
+</div>
+
+<script>
+var token = location.pathname.split('/').pop();
+var root = document.getElementById('root');
+
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function eur(n) {
+  return new Intl.NumberFormat('it-IT', {
+    style: 'currency', currency: 'EUR', useGrouping: true,
+  }).format(Number(n) || 0);
+}
+function dmy(iso) {
+  if (!iso) return '—';
+  var p = String(iso).slice(0, 10).split('-');
+  return p[2] + '/' + p[1] + '/' + p[0];
+}
+
+function render(d) {
+  var scaduto = d.validoFinoAl && d.validoFinoAl < new Date().toISOString().slice(0, 10);
+  var deciso = d.stato === 'accettata' || d.stato === 'rifiutata';
+
+  var righe = d.voci.map(function (v) {
+    return '<tr>'
+      + '<td class="desc">' + esc(v.description) + '</td>'
+      + '<td class="num">' + v.quantity + '</td>'
+      + '<td class="num">' + eur(v.unit_price) + '</td>'
+      + '<td class="num amount">' + eur(v.quantity * v.unit_price) + '</td>'
+      + '</tr>';
+  }).join('');
+
+  var html =
+    '<div class="sheet">'
+    + '<div class="sheet-head">'
+      + '<div>'
+        + '<div class="from-name">' + esc(d.mittente.nome) + '</div>'
+        + '<div class="from-meta">'
+          + (d.mittente.partitaIva ? 'P. IVA ' + esc(d.mittente.partitaIva) + '<br>' : '')
+          + (d.mittente.indirizzo ? esc(d.mittente.indirizzo) + '<br>' : '')
+          + (d.mittente.email ? esc(d.mittente.email) : '')
+        + '</div>'
+      + '</div>'
+      + '<div>'
+        + '<div class="doc-title">PREVENTIVO</div>'
+        + '<div class="doc-meta">N. ' + esc(d.numero) + '<br>'
+          + 'Data: ' + dmy(d.data) + '<br>'
+          + 'Valido fino al: ' + dmy(d.validoFinoAl) + '</div>'
+      + '</div>'
+    + '</div>';
+
+  if (d.cliente) {
+    html += '<div class="to">'
+      + '<div class="to-label">Preparato per</div>'
+      + '<div class="to-name">' + esc(d.cliente.name) + '</div>'
+      + '<div class="to-meta">'
+        + (d.cliente.address ? esc(d.cliente.address) : '')
+        + (d.cliente.vat_number ? '<br>P. IVA ' + esc(d.cliente.vat_number) : '')
+      + '</div></div>';
+  }
+
+  html += '<div class="body">'
+    + (scaduto && !deciso ? '<div class="expired">Questo preventivo è scaduto il '
+        + dmy(d.validoFinoAl) + '. Puoi comunque accettarlo, ma conviene ricontattare chi te l\'ha inviato.</div>' : '')
+    + '<table class="items"><thead><tr>'
+      + '<th>Descrizione</th><th class="num">Qtà</th><th class="num">Prezzo</th><th class="num">Totale</th>'
+    + '</tr></thead><tbody>' + righe + '</tbody></table>'
+    + '<div class="totals">'
+      + '<div class="row"><span>Imponibile</span><span>' + eur(d.totali.subtotal) + '</span></div>'
+      + '<div class="row"><span>IVA ' + d.ivaPercentuale + '%</span><span>' + eur(d.totali.vatAmount) + '</span></div>'
+      + (d.totali.withholdingAmount > 0
+          ? '<div class="row"><span>Ritenuta ' + d.ritenutaPercentuale + '%</span><span>− '
+            + eur(d.totali.withholdingAmount) + '</span></div>' : '')
+      + '<div class="row grand"><span>Totale</span><span>' + eur(d.totali.total) + '</span></div>'
+    + '</div>'
+    + (d.note ? '<div class="notes"><h3>Note</h3><p>' + esc(d.note) + '</p></div>' : '')
+  + '</div>';
+
+  if (deciso) {
+    var ok = d.stato === 'accettata';
+    html += '<div class="outcome">'
+      + '<div class="mark ' + (ok ? 'ok' : 'no') + '">' + (ok ? '✓' : '—') + '</div>'
+      + '<h2>' + (ok ? 'Preventivo accettato' : 'Preventivo rifiutato') + '</h2>'
+      + '<p>' + (ok
+          ? 'Grazie! Chi te l\'ha inviato è stato avvisato e ti ricontatterà a breve.'
+          : 'La risposta è stata registrata. Se cambi idea, contatta direttamente chi te l\'ha inviato.')
+        + (d.decisoIl ? '<br><span style="font-size:13px">Risposta registrata il ' + dmy(d.decisoIl) + '</span>' : '')
+      + '</p>'
+      + (d.firma ? '<div class="signed-box"><h3>Firmato</h3>'
+          + '<img src="' + esc(d.firma) + '" alt="Firma">'
+          + (d.firmatario ? '<div class="who">' + esc(d.firmatario) + '</div>' : '')
+          + '<div class="when">' + dmy(d.decisoIl) + '</div></div>' : '')
+      + (d.notaCliente ? '<div class="notes" style="text-align:left;margin-top:20px"><h3>Il tuo messaggio</h3><p>'
+          + esc(d.notaCliente) + '</p></div>' : '')
+    + '</div>';
+  } else if (d.decidibile) {
+    html += '<div class="decide">'
+      + '<h2>Ti va bene?</h2>'
+      + '<p>Rispondi con un clic. Non serve registrarsi né scaricare nulla.</p>'
+      + '<div class="decide-actions">'
+        + '<button class="btn-accept" id="accept">✓ Accetto il preventivo</button>'
+        + '<button class="btn-decline" id="decline">Non mi interessa</button>'
+      + '</div>'
+      + '<div class="note-field" id="note-field">'
+        + '<div id="sign-block" class="sign-wrap" style="display:none">'
+          + '<label class="sign-label">Firma qui col dito</label>'
+          + '<div class="sign-pad" id="sign-pad">'
+            + '<canvas id="sign-canvas"></canvas>'
+            + '<div class="sign-hint">Traccia la tua firma</div>'
+          + '</div>'
+          + '<div class="sign-actions">'
+            + '<span style="font-size:12px;color:var(--muted)">Facoltativa, ma rende l\'accettazione più formale</span>'
+            + '<button type="button" class="sign-clear" id="sign-clear">Cancella</button>'
+          + '</div>'
+          + '<div class="field" style="margin-top:14px">'
+            + '<label style="font-size:13px;font-weight:600;color:var(--ink-2)">Nome di chi firma</label>'
+            + '<input class="input" id="firmatario" placeholder="Nome e cognome">'
+          + '</div>'
+        + '</div>'
+        + '<label style="display:block;font-size:13px;font-weight:600;color:var(--ink-2);margin:16px 0 6px">'
+          + 'Vuoi aggiungere un messaggio? (facoltativo)</label>'
+        + '<textarea class="input" id="nota" style="min-height:80px" '
+          + 'placeholder="Es. Ci servirebbe consegna entro fine mese"></textarea>'
+        + '<button class="btn btn-primary btn-sm" id="conferma" style="margin-top:10px">Conferma</button>'
+        + ' <button class="btn btn-ghost btn-sm" id="annulla">Annulla</button>'
+      + '</div>'
+    + '</div>';
+  }
+
+  html += '<div class="sheet-foot">Preventivo inviato con Solvia</div></div>';
+  root.innerHTML = html;
+
+  if (!deciso && d.decidibile) wireDecision();
+}
+
+/* ---------- Firma tracciata col dito ---------- */
+var signPad = { canvas: null, ctx: null, drawing: false, hasDrawn: false };
+
+function setupSignature() {
+  var canvas = document.getElementById('sign-canvas');
+  var pad = document.getElementById('sign-pad');
+  if (!canvas || signPad.canvas === canvas) return;
+
+  // Il canvas va dimensionato in pixel reali, tenendo conto della densità
+  // dello schermo: sui tablet ad alta risoluzione altrimenti la firma
+  // risulterebbe sfocata.
+  var ratio = window.devicePixelRatio || 1;
+  var box = pad.getBoundingClientRect();
+  canvas.width = Math.round(box.width * ratio);
+  canvas.height = Math.round(box.height * ratio);
+
+  var ctx = canvas.getContext('2d');
+  ctx.scale(ratio, ratio);
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#1E293B';
+
+  signPad.canvas = canvas;
+  signPad.ctx = ctx;
+  signPad.hasDrawn = false;
+  // Segnala che il riquadro è pronto a ricevere il tocco: prima di questo
+  // momento i gestori non sono ancora collegati.
+  pad.dataset.ready = '1';
+
+  function pos(e) {
+    var r = canvas.getBoundingClientRect();
+    var p = e.touches ? e.touches[0] : e;
+    return { x: p.clientX - r.left, y: p.clientY - r.top };
+  }
+
+  function start(e) {
+    e.preventDefault();
+    signPad.drawing = true;
+    var p = pos(e);
+    ctx.beginPath();
+    ctx.moveTo(p.x, p.y);
+  }
+
+  function move(e) {
+    if (!signPad.drawing) return;
+    e.preventDefault();
+    var p = pos(e);
+    ctx.lineTo(p.x, p.y);
+    ctx.stroke();
+    if (!signPad.hasDrawn) {
+      signPad.hasDrawn = true;
+      pad.classList.add('drawn');
+    }
+  }
+
+  function end() { signPad.drawing = false; }
+
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', end);
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', end);
+  canvas.addEventListener('mouseleave', end);
+
+  document.getElementById('sign-clear').addEventListener('click', function () {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    signPad.hasDrawn = false;
+    pad.classList.remove('drawn');
+  });
+}
+
+function wireDecision() {
+  var scelta = null;
+  var field = document.getElementById('note-field');
+
+  function apri(valore) {
+    scelta = valore;
+    field.classList.add('show');
+    // La firma si chiede solo a chi accetta: per un rifiuto non ha senso.
+    document.getElementById('sign-block').style.display = valore ? 'block' : 'none';
+    if (valore) setTimeout(setupSignature, 50);
+    document.getElementById('conferma').textContent =
+      valore ? 'Conferma accettazione' : 'Conferma rifiuto';
+    field.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  document.getElementById('accept').addEventListener('click', function () { apri(true); });
+  document.getElementById('decline').addEventListener('click', function () { apri(false); });
+  document.getElementById('annulla').addEventListener('click', function () {
+    field.classList.remove('show'); scelta = null;
+  });
+
+  document.getElementById('conferma').addEventListener('click', async function (e) {
+    var btn = e.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Invio…';
+    try {
+      var res = await fetch('/api/pubblico/preventivo/' + encodeURIComponent(token) + '/decisione', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accetta: scelta,
+          nota: document.getElementById('nota').value,
+          firma: (scelta && signPad.hasDrawn) ? signPad.canvas.toDataURL('image/png') : null,
+          firmatario: scelta ? (document.getElementById('firmatario') || {}).value : null,
+        }),
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Operazione non riuscita');
+      load();
+    } catch (ex) {
+      btn.disabled = false;
+      btn.textContent = 'Riprova';
+      alert(ex.message);
+    }
+  });
+}
+
+async function load() {
+  try {
+    var res = await fetch('/api/pubblico/preventivo/' + encodeURIComponent(token));
+    if (!res.ok) {
+      root.innerHTML = '<div class="center-msg">'
+        + '<h1 style="font-size:22px;font-weight:800;margin-bottom:10px">Preventivo non disponibile</h1>'
+        + '<p style="color:var(--muted)">Il link non è valido o è stato revocato. '
+        + 'Chiedi a chi te l\'ha mandato di rigenerarlo.</p></div>';
+      return;
+    }
+    render(await res.json());
+  } catch (ex) {
+    root.innerHTML = '<div class="center-msg"><p style="color:var(--muted)">'
+      + 'Non riesco a caricare il preventivo. Riprova tra poco.</p></div>';
+  }
+}
+
+load();
+</script>
+</body>
+</html>

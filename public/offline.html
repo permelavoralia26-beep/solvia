@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sei offline — Solvia</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+  body{display:flex;align-items:center;justify-content:center;padding:24px;min-height:100vh;}
+  .box{max-width:420px;text-align:center;}
+  .icon{width:72px;height:72px;border-radius:50%;background:var(--warn-soft);color:var(--warn);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-size:32px;}
+  h1{font-size:24px;font-weight:800;margin-bottom:12px;}
+  p{color:var(--muted);font-size:15px;line-height:1.7;margin-bottom:24px;}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="icon">📡</div>
+  <h1>Sei senza connessione</h1>
+  <p>Solvia ha bisogno della rete per mostrarti dati aggiornati: preferisco dirtelo
+    piuttosto che farti vedere importi di ieri come se fossero di oggi.<br><br>
+    Appena torna la linea, ricarica.</p>
+  <button class="btn btn-primary btn-pill" onclick="location.reload()">Riprova</button>
+</div>
+</body>
+</html>

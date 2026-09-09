@@ -1,0 +1,38 @@
+{
+  "name": "Solvia — copilota amministrativo",
+  "short_name": "Solvia",
+  "description": "Preventivi, fatture, scadenze e tasse per chi lavora da solo.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F8FAFC",
+  "theme_color": "#4F46E5",
+  "lang": "it",
+  "categories": ["business", "finance", "productivity"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nuovo preventivo",
+      "short_name": "Preventivo",
+      "url": "/app#quotes",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Nuova fattura",
+      "short_name": "Fattura",
+      "url": "/app#invoices",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Ore lavorate",
+      "short_name": "Ore",
+      "url": "/app#time",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
