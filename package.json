@@ -1,0 +1,62 @@
+{
+  "name": "solvia",
+  "version": "1.0.0",
+  "description": "Preventivi con accettazione online, solleciti automatici, fatture ricorrenti e calcolo tasse per freelance e piccole imprese",
+  "main": "server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "build:pages": "node build-pages.js",
+    "admin": "node amministratore.js",
+    "controllo": "node controllo.js",
+    "test": "npm run test:syntax && npm run test:api && npm run test:account && npm run test:studio && npm run test:direzione && npm run test:prelancio && npm run test:newsletter && npm run test:billing && npm run test:pro && npm run test:extra && npm run test:diagnostica && npm run test:controllo && npm run test:sondaggio && npm run test:webhook",
+    "test:syntax": "node test-syntax.js",
+    "test:api": "./test-e2e.sh",
+    "test:account": "./test-account.sh",
+    "test:studio": "./test-studio.sh",
+    "test:direzione": "./test-direzione.sh",
+    "test:prelancio": "./test-prelancio.sh",
+    "test:newsletter": "./test-newsletter.sh",
+    "test:billing": "./test-billing.sh",
+    "test:pro": "./test-pro.sh",
+    "test:extra": "./test-extra.sh",
+    "test:webhook": "node test-webhook.js",
+    "test:ui": "node test-ui.js",
+    "test:ui:tutti": "npm run test:ui && npm run test:ui:pro && npm run test:ui:extra && npm run test:ui:newsletter && npm run test:ui:billing && npm run test:ui:account && npm run test:ui:studio && npm run test:ui:direzione && npm run test:ui:prelancio && npm run test:ui:sondaggio",
+    "test:ui:pro": "node test-ui-pro.js",
+    "test:ui:extra": "node test-ui-extra.js",
+    "test:ui:newsletter": "node test-ui-newsletter.js",
+    "test:ui:billing": "node test-ui-billing.js",
+    "test:ui:account": "node test-ui-account.js",
+    "test:ui:studio": "node test-ui-studio.js",
+    "test:ui:direzione": "node test-ui-direzione.js",
+    "test:ui:prelancio": "node test-ui-prelancio.js",
+    "test:diagnostica": "./test-diagnostica.sh",
+    "test:controllo": "./test-controllo.sh",
+    "test:sondaggio": "./test-sondaggio.sh",
+    "test:ui:sondaggio": "node test-ui-sondaggio.js"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "nodemailer": "^9.0.5",
+    "pdfkit": "^0.19.1",
+    "stripe": "^22.5.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^13.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/[tuo-utente]/solvia.git"
+  }
+}

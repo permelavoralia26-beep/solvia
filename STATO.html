@@ -1,0 +1,322 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solvia — fatto e da fare</title>
+<style>
+  :root{
+    --bg:#F7F7F5; --card:#FFFFFF; --ink:#191917; --soft:#6B6B66; --line:#E5E4E0;
+    --ok:#0F766E; --ok-soft:#D6F1EC; --wait:#B45309; --wait-soft:#FDF0D9;
+    --stop:#B91C1C; --stop-soft:#FBE3E3; --accent:#1D4ED8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151513; --card:#1E1E1B; --ink:#EFEEE9; --soft:#A3A29B; --line:#33322E;
+      --ok:#5EEAD4; --ok-soft:#123A36; --wait:#FBBF24; --wait-soft:#3A2E12;
+      --stop:#FCA5A5; --stop-soft:#3A1A1A; --accent:#93B4FF;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.62;font-size:16px;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 72px;}
+
+  header{background:var(--card);border-bottom:1px solid var(--line);padding:44px 0 34px;margin-bottom:32px;}
+  header .wrap{padding-bottom:0;}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--soft);font-weight:600;margin-bottom:12px;}
+  h1{margin:0 0 12px;font-size:29px;line-height:1.22;letter-spacing:-.02em;}
+  header p{margin:0;color:var(--soft);font-size:16px;max-width:56ch;}
+
+  .verdetto{margin:22px 0 0;padding:16px 18px;border-radius:12px;
+    background:var(--ok-soft);color:var(--ok);font-weight:600;font-size:15px;line-height:1.5;}
+
+  .numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:10px;margin-bottom:34px;}
+  .num{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 14px;}
+  .num b{display:block;font-size:25px;letter-spacing:-.02em;line-height:1.15;}
+  .num span{display:block;font-size:12.5px;color:var(--soft);margin-top:2px;}
+
+  section{margin-bottom:38px;}
+  h2{font-size:21px;margin:0 0 4px;letter-spacing:-.015em;display:flex;align-items:baseline;gap:11px;}
+  h2 .n{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+    width:27px;height:27px;border-radius:8px;background:var(--ink);color:var(--bg);
+    font-size:13.5px;font-weight:700;}
+  .sub{margin:0 0 16px;color:var(--soft);font-size:14.5px;padding-left:38px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px 20px 6px;margin-bottom:14px;}
+  .card.tight{padding-bottom:20px;}
+  h3{font-size:15px;margin:20px 0 8px;letter-spacing:-.01em;}
+  h3:first-child{margin-top:0;}
+  p{margin:0 0 14px;}
+
+  ul.clean{list-style:none;padding-left:0;margin:0 0 14px;}
+  ul.clean li{display:flex;gap:11px;align-items:flex-start;margin-bottom:11px;font-size:15px;}
+  ul.clean li div{flex:1;min-width:0;}
+  .mark{flex:0 0 auto;width:21px;height:21px;border-radius:50%;display:flex;
+    align-items:center;justify-content:center;font-size:12px;font-weight:700;margin-top:2px;}
+  .tick{background:var(--ok-soft);color:var(--ok);}
+  .clock{background:var(--wait-soft);color:var(--wait);}
+  .cross{background:var(--stop-soft);color:var(--stop);}
+
+  .step{display:flex;gap:14px;align-items:flex-start;padding:15px 0;border-top:1px solid var(--line);}
+  .step:first-of-type{border-top:0;padding-top:2px;}
+  .step .k{flex:0 0 auto;width:30px;height:30px;border-radius:9px;background:var(--wait-soft);
+    color:var(--wait);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .step .b{flex:1;min-width:0;}
+  .step b{display:block;font-size:15.5px;margin-bottom:3px;}
+  .step .t{font-size:13px;color:var(--soft);}
+
+  .box{border-radius:11px;padding:15px 17px;margin:0 0 16px;font-size:14.5px;line-height:1.56;}
+  .box strong{display:block;margin-bottom:4px;}
+  .box.ok{background:var(--ok-soft);color:var(--ok);}
+  .box.warn{background:var(--wait-soft);color:var(--wait);}
+  .box.bad{background:var(--stop-soft);color:var(--stop);}
+
+  code{background:var(--bg);border:1px solid var(--line);padding:1px 6px;border-radius:5px;
+    font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word;}
+  pre{background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:13px 15px;
+    overflow-x:auto;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 16px;}
+
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:16px;}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:440px;}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--soft);font-weight:600;}
+  tr:last-child td{border-bottom:0;}
+
+  footer{color:var(--soft);font-size:13.5px;text-align:center;border-top:1px solid var(--line);
+    padding-top:22px;margin-top:8px;}
+</style>
+
+<header>
+  <div class="wrap">
+    <span class="kicker">Solvia · punto della situazione</span>
+    <h1>Cosa è fatto, e cosa manca davvero</h1>
+    <p>Il codice è finito. Quello che resta non si scrive: si clicca, si compila
+       o si aspetta un documento. Sotto c'è tutto, nell'ordine giusto.</p>
+    <div class="verdetto">
+      Il prodotto è pronto per andare online oggi come <b>progetto gratuito</b>:
+      niente da vendere, niente da incassare, nessun obbligo. Servono circa
+      40 minuti e nessuna competenza tecnica.
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="numbers">
+    <div class="num"><b>24.134</b><span>righe di codice</span></div>
+    <div class="num"><b>588</b><span>test, tutti verdi</span></div>
+    <div class="num"><b>104</b><span>endpoint API</span></div>
+    <div class="num"><b>19</b><span>tabelle nel database</span></div>
+    <div class="num"><b>16</b><span>pagine web</span></div>
+    <div class="num"><b>0</b><span>funzioni finte</span></div>
+  </div>
+
+  <!-- ══════════════════════════ FATTO ══════════════════════════ -->
+  <section>
+    <h2><span class="n">1</span> Fatto — il prodotto</h2>
+    <p class="sub">Funziona davvero: c'è un database, non una schermata che finge.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><span class="mark tick">✓</span><div><strong>Preventivi con accettazione online.</strong> Mandi un link, il cliente apre una pagina impaginata, accetta o rifiuta con un clic e <em>firma col dito</em>. Vedi quando l'ha aperto. L'accettazione crea da sola l'attività "emetti fattura".</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Fatture</strong> con IVA, ritenuta d'acconto, numerazione per anno, stati, rilevamento degli scaduti ed export PDF.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Solleciti</strong> a tono crescente, preparati in automatico e spediti solo dopo la tua approvazione.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Fatture ricorrenti</strong> che si generano da sole, con il ricavo mensile ricorrente a colpo d'occhio.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Ore</strong> col cronometro per cliente, che diventano una fattura in un clic.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Tasse:</strong> quanto accantonare per imposta sostitutiva e contributi, in base al regime.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Spese, clienti, attività, dashboard</strong> con incassato del mese, crediti scaduti e grafico a sei mesi.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Inbox</strong> che classifica le email per categoria e urgenza e prepara le bozze — funziona a regole, senza chiavi esterne; con <code>ANTHROPIC_API_KEY</code> passa a un modello vero.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Portale cliente:</strong> un link personale dove il cliente vede tutti i suoi documenti senza registrarsi. Revocabile.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Riepilogo annuale in PDF</strong> per il commercialista, ricerca globale, tema scuro, app installabile sulla schermata home.</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">2</span> Fatto — account, piani e studio</h2>
+    <p class="sub">Chi si iscrive entra in una piattaforma sua, non in una demo condivisa.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><span class="mark tick">✓</span><div><strong>Registrazione e accesso veri,</strong> con benvenuto in tre passi al primo ingresso: scegli account vuoto o precaricato di esempi, e i dati restano sul server (non si salta svuotando il browser, riprende anche da un altro dispositivo).</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Sicurezza dell'account:</strong> recupero password via email con link valido un'ora e una sola volta (nel database c'è solo la sua impronta), cambio password che disconnette le altre sessioni, blocco dopo cinque tentativi falliti.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Tre piani:</strong> Free, Pro 19 €/mese, Team 49 €/mese, con i limiti applicati <em>sul server</em> — non nascondendo i pulsanti.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Studio condiviso (Team):</strong> fino a 5 persone sugli stessi clienti e le stesse fatture. Il titolare invita per email, ogni azione resta firmata da chi l'ha fatta, l'accesso si revoca in un clic e il lavoro resta allo studio.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>GDPR:</strong> esportazione dei propri dati e cancellazione dell'account dalle Impostazioni. Newsletter con doppia conferma e disiscrizione al primo clic.</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">3</span> Fatto — la tua console, invisibile ai clienti</h2>
+    <p class="sub">Una piattaforma separata, sullo stesso server ma su un indirizzo tuo.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><span class="mark tick">✓</span><div><strong>Cosa ci vedi:</strong> quante persone arrivano e da dove, chi scorre fino ai prezzi, quali pulsanti premono, quali domande frequenti aprono; e poi quanti account nascono, quanti si fermano al benvenuto, chi paga, quanto entra al mese, chi disdice. Più un flusso in diretta che si aggiorna da solo.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Come sta nascosta:</strong> l'app dei clienti non contiene una riga del suo codice, la pagina sta fuori dai file pubblici, e a chi non è amministratore risponde <strong>404, non 403</strong> — identico a un indirizzo inventato. Un "vietato" direbbe comunque "qui c'è qualcosa".</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Come conta le persone senza spiarle:</strong> da IP e browser calcola un'impronta con un sale che cambia ogni giorno; <em>l'IP non viene mai scritto</em>. Nessun cookie, quindi nessun banner. Chi invia "Do Not Track" non viene contato. Gli eventi si cancellano da soli dopo dodici mesi.</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">4</span> Fatto — quello che ho chiuso in questi ultimi giorni</h2>
+    <p class="sub">Le cose che rendono la pubblicazione una cosa sicura invece che un salto nel buio.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><span class="mark tick">✓</span><div><strong>Pre-lancio.</strong> Il sito va online e dice la verità: i prezzi restano scritti ma i pulsanti diventano <em>"Avvisami quando apre"</em> e raccolgono l'email; il piano gratuito funziona per intero. In console vedi quanti sono in lista, per quale piano e <strong>quanto varrebbero al mese</strong>.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Controllo prima del volo</strong> (<code>npm run controllo</code>). Gli errori peggiori di una pubblicazione sono silenziosi: il database su una cartella che si azzera, le sessioni rigenerate a ogni riavvio, la privacy che mostra <em>"[Nome e Cognome]"</em>. Ora un comando li elenca, separa il rotto dal da-sistemare e scrive l'istruzione. Gira anche da solo a ogni deploy.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Pagine legali generate.</strong> Non si modificano più a mano: metti tre variabili e privacy, cookie e termini si riscrivono da sole. Ed erano <em>sbagliate</em> — dicevano "progetto gratuito" mentre il sito vende 19 €/mese. Ora parlano di abbonamento, rinnovo automatico, disdetta libera, recesso di 14 giorni e 30 giorni di preavviso sui cambi di prezzo.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Il disco di Render.</strong> Il piano gratuito non ammette dischi persistenti: il database sarebbe sparito a ogni aggiornamento <em>senza dare errore</em>. La configurazione ora parte da <code>starter</code>, con la spiegazione scritta accanto.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>Progetto gratuito e domanda sul prezzo.</strong> Con una variabile il sito perde prezzi, piani e limiti — e al loro posto chiede <em>"quanto pagheresti per una cosa così?"</em>. Non incassa niente, non promette niente, e in console vedi quante persone pagherebbero e la cifra tipica. È l'informazione che darebbe un listino, senza un listino.</div></li>
+        <li><span class="mark tick">✓</span><div><strong>588 test</strong> — 456 lato server, 132 su un browser vero — che girano da soli a ogni modifica, anche quando pubblichi dal telefono.</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════ DA FARE ══════════════════════════ -->
+  <section>
+    <h2><span class="n">5</span> Da fare adesso — solo tu puoi</h2>
+    <p class="sub">Non è codice: sono account da aprire e campi da riempire. Circa 40 minuti.</p>
+
+    <div class="card tight">
+      <div class="step">
+        <div class="k">1</div>
+        <div class="b"><b>Apri un account GitHub e uno Render</b>
+        <span class="t">Gratis entrambi. Render legge da solo il file di configurazione già nel pacchetto: non devi impostare niente a mano. · 15 minuti</span></div>
+      </div>
+      <div class="step">
+        <div class="k">2</div>
+        <div class="b"><b>Metti i tuoi dati nelle pagine legali</b>
+        <span class="t">Tre variabili nel pannello di Render: <code>SOLVIA_TITOLARE</code>, <code>SOLVIA_CONTATTO_EMAIL</code>, <code>SOLVIA_INDIRIZZO</code>. Privacy, cookie e termini si riscrivono da soli al deploy. · 5 minuti</span></div>
+      </div>
+      <div class="step">
+        <div class="k">3</div>
+        <div class="b"><b>Scegli l'indirizzo della tua console</b>
+        <span class="t"><code>SOLVIA_CONSOLE_PATH</code> con qualcosa che conosci solo tu. <code>/console</code> è il primo che chiunque proverebbe. · 1 minuto</span></div>
+      </div>
+      <div class="step">
+        <div class="k">4</div>
+        <div class="b"><b>Il sito esce gratuito: non toccare niente</b>
+        <span class="t"><code>SOLVIA_COMMERCIAL=false</code> è già impostato. Niente prezzi, niente piani, niente incassi — e al posto del listino la domanda <i>"quanto pagheresti?"</i>. · già fatto</span></div>
+      </div>
+      <div class="step">
+        <div class="k">5</div>
+        <div class="b"><b>Registrati tu per primo sul sito</b>
+        <span class="t">Il primo account diventa amministratore, cioè l'unico che entra in console. Fallo prima di dirlo a chiunque. · 2 minuti</span></div>
+      </div>
+      <div class="step">
+        <div class="k">6</div>
+        <div class="b"><b>Metti il tuo nome nel file LICENSE</b>
+        <span class="t">L'unico file rimasto da modificare a mano, dal browser su GitHub. · 1 minuto</span></div>
+      </div>
+    </div>
+
+    <div class="box ok">
+      <strong>Non devi ricordarti questa lista</strong>
+      Dopo il primo deploy, il log di Render esegue da solo il controllo e ti dice cosa
+      manca ancora, riga per riga, con l'istruzione per sistemarlo.
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">6</span> Da fare questa settimana — la parte difficile</h2>
+    <p class="sub">Non è tecnica, ed è quella che decide se il progetto vive.</p>
+
+    <div class="card">
+      <p>Il collo di bottiglia non è come incassare: è che <strong>nessuno sa che Solvia
+      esiste</strong>. Con zero visitatori, il pagamento più bello del mondo incassa zero.</p>
+
+      <div class="scroll">
+      <table>
+        <tr><th>Giorno</th><th>Cosa fai</th></tr>
+        <tr><td>Lunedì</td><td>Pubblichi. Scrivi alle 5 persone che <em>già conosci</em> — il fotografo, il grafico, l'idraulico</td></tr>
+        <tr><td>Mar–Mer</td><td>30 messaggi al giorno su Instagram e LinkedIn. La sera guardi la console</td></tr>
+        <tr><td>Giovedì</td><td>Post in 3 gruppi Facebook di partite IVA. Altri 20 messaggi</td></tr>
+        <tr><td>Venerdì</td><td>Scrivi a chi si è registrato ma non ha finito il benvenuto</td></tr>
+        <tr><td>Weekend</td><td>Sistemi le due cose più segnalate. Conti quanti sono in lista</td></tr>
+      </table>
+      </div>
+
+      <p>I messaggi sono già scritti parola per parola in <strong>LANCIO.md</strong>.
+      Il conto realistico: su 20 messaggi scritti a mano, ~5 risposte, ~1 persona in lista.
+      Quindi <strong>10 persone in lista ≈ 200 messaggi</strong>.</p>
+
+      <div class="box warn">
+        <strong>Il numero che ti dice cosa è rotto</strong>
+        Se arrivano in tanti e nessuno preme "Avvisami", il problema è il prodotto o il prezzo.
+        Se non arriva nessuno, il problema sono i messaggi. Sono due problemi diversi, e la
+        console ti dice quale hai senza tirare a indovinare.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">7</span> Da fare dopo — quando si potrà vendere</h2>
+    <p class="sub">Non è oggi, e va bene così: intanto il prodotto si fa provare.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><span class="mark clock">›</span><div><strong>L'età, prima di tutto.</strong> In Italia sotto i 16 anni c'è un divieto generale di lavoro, e la partita IVA prima dei 18 richiede comunque i genitori come rappresentanti legali più l'autorizzazione del giudice tutelare. Non è una porta difficile: è chiusa, e si apre dai 16 in poi passando da loro.</div></li>
+        <li><span class="mark clock">›</span><div><strong>Poi la partita IVA.</strong> Un abbonamento mensile è attività abituale e la richiede <em>a prescindere</em> dal servizio di pagamento: né PayPal né un Merchant of Record estero la aggirano. Buona notizia: come professionista si finisce in Gestione Separata, dove <em>se non fatturi non paghi contributi</em>. Il costo fisso è il commercialista.</div></li>
+        <li><span class="mark clock">›</span><div><strong>Account Stripe verificato,</strong> due prodotti creati (19 € e 49 €), quattro valori incollati nel pannello di Render. Poi premi <em>Verifica configurazione</em> dentro l'app: se qualcosa non torna te lo dice con l'istruzione precisa.</div></li>
+        <li><span class="mark clock">›</span><div><strong>Metti <code>SOLVIA_COMMERCIAL=true</code>.</strong> Riappaiono piani, prezzi, limiti e checkout. Se i pagamenti non sono ancora collegati, aggiungi <code>SOLVIA_PRELANCIO=true</code>: i prezzi si vedono ma i pulsanti raccolgono email invece di aprire un pagamento finto.</div></li>
+        <li><span class="mark clock">›</span><div><strong>Un dominio</strong> (~10 €/anno) e le <strong>credenziali SMTP</strong> di una casella vera, così conferme, recuperi password e inviti partono davvero invece di finire in archivio.</div></li>
+      </ul>
+
+      <div class="box bad">
+        <strong>Le due chiavi che non si incollano mai in chat</strong>
+        <code>sk_...</code> e <code>whsec_...</code> vanno solo nel pannello di Render — a nessuno,
+        mai, per nessun motivo. Chi ha la prima può muovere soldi sul tuo account.
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">8</span> Non fatto, e perché</h2>
+    <p class="sub">Detto chiaro, così non ci sono sorprese.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><span class="mark cross">✗</span><div><strong>Lettura della casella di posta vera.</strong> Le email si inseriscono a mano o arrivano dai dati d'esempio. Collegare Gmail o Outlook richiede l'autorizzazione OAuth, che richiede un dominio verificato: si fa dopo la pubblicazione, non prima.</div></li>
+        <li><span class="mark cross">✗</span><div><strong>Fatturazione elettronica allo SDI.</strong> I PDF sono corretti e completi, ma l'invio al Sistema di Interscambio richiede un intermediario accreditato. Per ora si passa dal commercialista, come fa la maggior parte dei freelance.</div></li>
+        <li><span class="mark cross">✗</span><div><strong>Invio automatico dei solleciti.</strong> I testi vengono preparati e sono pronti; per farli partire servono le credenziali SMTP di una casella reale (punto 7).</div></li>
+        <li><span class="mark cross">✗</span><div><strong>Incasso reale.</strong> Dipende dalla partita IVA, non dal codice: il percorso completo — scelta piano, pagamento, sblocco funzioni, disdetta — funziona già in simulazione e lo puoi provare oggi.</div></li>
+      </ul>
+      <p>Nessuna di queste è una scorciatoia presa per fretta: dipendono tutte da un
+      documento, un dominio o un contratto.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">9</span> Il costo, in chiaro</h2>
+    <p class="sub">Perché è la domanda che viene subito dopo.</p>
+
+    <div class="card">
+      <div class="scroll">
+      <table>
+        <tr><th>Voce</th><th>Quanto</th><th>Quando</th></tr>
+        <tr><td>GitHub</td><td>0 €</td><td>subito</td></tr>
+        <tr><td>Render, piano <code>starter</code></td><td>~7 $/mese</td><td>alla pubblicazione</td></tr>
+        <tr><td>Dominio</td><td>~10 €/anno</td><td>quando vuoi</td></tr>
+        <tr><td>Email (Brevo, Resend)</td><td>0 € per iniziare</td><td>quando vuoi</td></tr>
+        <tr><td>Stripe</td><td>1,5% + 0,25 € a incasso</td><td>solo se incassi</td></tr>
+        <tr><td>Partita IVA forfettaria</td><td>commercialista, contributi solo su ciò che incassi</td><td>dai 16 anni, con i tuoi</td></tr>
+      </table>
+      </div>
+      <p>Oggi spendi <strong>circa 7 $ al mese</strong>, e solo se vuoi che i dati di chi
+      si registra restino. Sul piano gratuito di Render spendi <strong>zero</strong>, con
+      l'archivio che si azzera da solo — va benissimo per far vedere il progetto.
+      Tutto il resto arriva solo il giorno in cui ci sarà qualcosa da incassare.</p>
+    </div>
+  </section>
+
+  <footer>
+    Solvia — 24.134 righe, 588 test verdi, 22 commit.<br>
+    Punto della situazione aggiornato il 21 agosto 2026.
+  </footer>
+
+</div>

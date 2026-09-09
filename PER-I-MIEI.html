@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solvia — spiegato ai miei genitori</title>
+<style>
+  :root{
+    --bg:#F7F7F5; --card:#FFFFFF; --ink:#191917; --soft:#6B6B66; --line:#E5E4E0;
+    --ok:#0F766E; --ok-soft:#D6F1EC; --warn:#B45309; --warn-soft:#FDF0D9;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151513; --card:#1E1E1B; --ink:#EFEEE9; --soft:#A3A29B; --line:#33322E;
+      --ok:#5EEAD4; --ok-soft:#123A36; --warn:#FBBF24; --warn-soft:#3A2E12;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.68;font-size:16.5px;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px 70px;}
+
+  header{background:var(--card);border-bottom:1px solid var(--line);padding:46px 0 36px;margin-bottom:34px;}
+  header .wrap{padding-bottom:0;}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--soft);font-weight:600;margin-bottom:12px;}
+  h1{margin:0 0 14px;font-size:30px;line-height:1.22;letter-spacing:-.02em;}
+  header p{margin:0;color:var(--soft);font-size:17px;}
+
+  h2{font-size:21px;margin:38px 0 12px;letter-spacing:-.015em;}
+  h3{font-size:16px;margin:24px 0 8px;}
+  p{margin:0 0 16px;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 22px 8px;margin:0 0 18px;}
+  .card p:last-child{margin-bottom:14px;}
+
+  ul{margin:0 0 16px;padding-left:22px;}
+  li{margin-bottom:9px;}
+
+  .box{border-radius:12px;padding:17px 19px;margin:0 0 20px;font-size:15.5px;line-height:1.6;}
+  .box strong{display:block;margin-bottom:5px;}
+  .box.ok{background:var(--ok-soft);color:var(--ok);}
+  .box.warn{background:var(--warn-soft);color:var(--warn);}
+
+  table{border-collapse:collapse;width:100%;font-size:15px;margin-bottom:18px;}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--soft);font-weight:600;}
+  tr:last-child td{border-bottom:0;}
+
+  code{background:var(--bg);border:1px solid var(--line);padding:1px 6px;border-radius:5px;
+    font-size:13.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word;}
+
+  footer{color:var(--soft);font-size:14px;border-top:1px solid var(--line);
+    padding-top:22px;margin-top:34px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="kicker">Da leggere in cinque minuti</span>
+    <h1>Cos'è Solvia, e cosa serve da voi</h1>
+    <p>Vostro figlio ha costruito un programma. Qui c'è scritto cos'è, cosa non è,
+       quanto costa e perché a un certo punto serve un adulto.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <h2>In una frase</h2>
+  <p>Solvia è un programma che aiuta chi lavora in proprio — un fotografo, un grafico,
+  un idraulico con partita IVA — a preparare preventivi e fatture, a farsi pagare e a
+  sapere quante tasse mettere da parte. Funziona da telefono e da computer, come un
+  sito qualunque.</p>
+
+  <p>L'ha scritto lui, da zero. Non è un compito di scuola e non è un gioco: è un
+  programma completo, con un archivio dei dati, gli accessi con password e
+  <strong>588 controlli automatici</strong> che verificano che tutto funzioni ogni volta
+  che tocca una riga di codice. Sono all'incirca ventitremila righe.</p>
+
+  <div class="box ok">
+    <strong>La cosa importante da capire</strong>
+    Roba di questo livello, a quindici anni, non è comune. Non ve lo dico per farvi
+    piacere: è il tipo di lavoro che a un colloquio, a un concorso o a una borsa di
+    studio si nota e pesa.
+  </div>
+
+  <h2>Cosa NON è</h2>
+  <p>Questa è la parte che di solito preoccupa, quindi la metto per prima e in chiaro.</p>
+
+  <div class="card">
+    <ul>
+      <li><strong>Non vende niente.</strong> Non ci sono prezzi, non c'è un carrello,
+      non c'è un posto dove inserire una carta di credito. Nemmeno nascosto: la parte
+      commerciale del programma è proprio spenta.</li>
+
+      <li><strong>Non vende e non investe.</strong> Nessun abbonamento, nessuna quota,
+      nessun "investi nell'azienda" — che sarebbe illegale, oltre che falso, visto che
+      un'azienda non c'è. L'unica cosa che <em>può</em> esistere è un "offrimi un caffè"
+      volontario, e solo se lo attivate voi: ne parliamo più sotto.</li>
+
+      <li><strong>Non serve la partita IVA.</strong> Non essendoci incassi, non c'è
+      nessun obbligo fiscale da rispettare e nessuna dichiarazione da fare. È lo stesso
+      inquadramento di un blog o di un sito personale.</li>
+
+      <li><strong>Non chiede dati particolari.</strong> Chi si registra lascia nome,
+      email e password, come su qualsiasi sito. Nient'altro è obbligatorio.</li>
+    </ul>
+  </div>
+
+  <p>L'unica cosa che il sito chiede ai visitatori è un'opinione:
+  <em>"quanto pagheresti per una cosa così?"</em>. Si risponde toccando una cifra.
+  Non si paga niente e non si attiva niente — serve solo a lui per capire se il
+  lavoro fatto vale qualcosa per qualcuno.</p>
+
+  <h2>Cosa serve da voi</h2>
+
+  <p>Una cosa sola, e non è un permesso: è una firma.</p>
+
+  <p>I servizi che tengono un sito acceso su internet chiedono, nelle loro condizioni,
+  che l'intestatario sia maggiorenne. Quindi <strong>l'account va aperto da uno di voi,
+  con il vostro nome</strong>. Lui ci lavora dentro, il progetto resta suo, ma
+  l'intestatario siete voi — ed è giusto così, perché è anche il nome che compare nelle
+  pagine legali del sito.</p>
+
+  <table>
+    <tr><th>Voce</th><th>Quanto</th><th>Serve per</th></tr>
+    <tr><td>GitHub</td><td>gratis</td><td>Dove vive il codice. Lo può aprire lui: le loro regole partono da 13 anni</td></tr>
+    <tr><td>Render — piano <code>starter</code></td><td>circa 7 $ al mese</td><td>Tenere il sito acceso e <b>non perdere i dati</b></td></tr>
+    <tr><td>Render — piano gratuito</td><td>0 €</td><td>Stessa cosa, ma l'archivio si svuota da solo: va bene solo per far vedere il progetto</td></tr>
+    <tr><td>Dominio (facoltativo)</td><td>circa 10 € l'anno</td><td>Un indirizzo tipo <code>solvia.it</code> invece di uno più lungo</td></tr>
+  </table>
+
+  <p>Il piano gratuito basta per mostrarlo a qualcuno. I 7 $ al mese servono solo se
+  volete che chi si registra ritrovi le sue cose la settimana dopo. Si può iniziare
+  gratis e decidere poi: si cambia con un clic, in qualsiasi momento.</p>
+
+  <h2>I dati delle persone</h2>
+
+  <p>Se qualcuno si registra, i suoi dati stanno nel sito. È una responsabilità vera e
+  non voglio farla sembrare più piccola di quello che è. Però il programma è stato
+  scritto tenendone conto:</p>
+
+  <div class="card">
+    <ul>
+      <li>Le password non sono conservate: c'è solo un'impronta da cui non si torna indietro.</li>
+      <li>Le statistiche di visita <strong>non registrano l'indirizzo IP</strong> di
+      nessuno, mai — nemmeno per un istante — e non usano cookie di tracciamento.
+      Per questo non serve nemmeno il banner dei cookie.</li>
+      <li>Chi si iscrive può <strong>scaricare tutti i suoi dati</strong> o
+      <strong>cancellare l'account</strong> da solo, con un pulsante, senza chiedere niente
+      a nessuno.</li>
+      <li>Privacy, cookie e termini d'uso ci sono, sono scritti su misura per quello che
+      il programma fa davvero, e riportano il vostro nome come titolare.</li>
+      <li>Le informazioni cancellate spariscono anche dalle statistiche dopo dodici mesi.</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <strong>Detto onestamente</strong>
+    Se un domani il sito avesse molti utenti, la responsabilità su quei dati sarebbe
+    di chi ha l'account intestato — cioè vostra. Oggi gli iscritti sono zero e
+    realisticamente saranno pochissimi. Ma è giusto che lo sappiate prima, non dopo.
+  </div>
+
+  <h2>Perché vale la pena dire di sì</h2>
+
+  <p>Non per i soldi: non ce ne sono e non ce ne saranno in questa fase.</p>
+
+  <p>Vale la pena perché la differenza fra "so programmare" e "ho fatto una cosa che
+  usano delle persone" è enorme, e si vede. Un progetto vero, online, con qualcuno che
+  lo prova e dice cosa non va, insegna in un mese quello che un corso insegna in un anno.
+  E resta scritto: si può mostrare a un professore, allegare a una domanda di borsa di
+  studio, raccontare a un colloquio fra qualche anno.</p>
+
+  <p>C'è anche una cosa che ha imparato strada facendo, e che secondo me conta più del
+  codice: ha provato diverse strade per far entrare qualche soldo, e ogni volta ha
+  scelto di fermarsi quando ha scoperto che non era in regola. Il sito esce gratuito
+  proprio per questo.</p>
+
+  <h2>Se un giorno volesse guadagnarci</h2>
+
+  <p>Non si può, per ora, e non è una questione di volontà: sotto i 16 anni in Italia
+  c'è un divieto generale di lavoro, e la partita IVA prima dei 18 richiede comunque
+  voi come rappresentanti legali e l'autorizzazione del giudice tutelare.</p>
+
+  <p>La strada esiste, ma inizia dai 16 anni e passa da voi. Nel frattempo l'unica cosa
+  sensata è quella che sta facendo: farlo usare gratis e raccogliere le opinioni.
+  Quando arriverà il momento, ci sarà una cosa in mano che oggi quasi nessuno ha —
+  la prova, con dei numeri, che a qualcuno serviva davvero.</p>
+
+  <h2>Il "caffè", se volete</h2>
+
+  <p>Nel sito c'è la possibilità di mettere un pulsante <em>"offrimi un caffè"</em>: chi
+  ha trovato utile Solvia manda due o tre euro, se gli va. <strong>È spento</strong>, e
+  resta spento finché non lo accendete voi: senza il vostro link e il vostro nome, sul
+  sito non compare niente.</p>
+
+  <p>Come funziona, se decidete di sì:</p>
+
+  <div class="card">
+    <ul>
+      <li>L'account su una piattaforma tipo <strong>Ko-fi</strong> lo aprite voi, con il
+      vostro nome e il vostro conto o PayPal. Quelle piattaforme chiedono che
+      l'intestatario sia maggiorenne, e chi riceve i soldi siete voi — non lui.</li>
+      <li><strong>Il sito non tocca i soldi.</strong> Il pulsante porta alla piattaforma,
+      che si occupa dell'incasso: qui non passa nessun dato di carte di credito, e non
+      c'è niente da custodire.</li>
+      <li><strong>Il pulsante dice il vostro nome.</strong> Chi manda un caffè legge a chi
+      sta arrivando: non è una scritta generica.</li>
+      <li><strong>Non compra niente.</strong> Il programma è identico per chi manda due
+      euro e per chi non manda nulla — nessuna funzione in più, nessuna corsia
+      preferenziale. È scritto nella pagina, ed è una promessa che il codice fa
+      rispettare.</li>
+      <li>Ko-fi non trattiene percentuali sulle donazioni; restano solo le commissioni di
+      chi elabora il pagamento (circa il 3%).</li>
+    </ul>
+  </div>
+
+  <div class="box warn">
+    <strong>La parte che riguarda voi, detta chiaramente</strong>
+    Quei soldi arrivano a un adulto, sul suo conto. Piccole offerte spontanee sono
+    normalmente <em>liberalità</em>, non un guadagno da attività: nessuno apre partita IVA
+    per un caffè. Ma è il vostro nome sull'account, quindi la valutazione è vostra — e se
+    un giorno diventassero una cifra ricorrente e non simbolica, vale una domanda al
+    commercialista prima che al sottoscritto.
+  </div>
+
+  <p>Il consiglio spassionato: non è quello il punto. In questa fase gli servono
+  <em>persone che lo usano</em>, non venti euro. Il pulsante mettetelo se vi fa piacere,
+  non aspettatevi che cambi niente — e giudicate il progetto da quante persone tornano,
+  non da quanti caffè arrivano.</p>
+
+  <h2>Se cambiate idea</h2>
+
+  <p>Si spegne in un minuto, dal pannello di Render, senza conseguenze e senza costi
+  ulteriori. Il codice resta sul computer e su GitHub, e il sito semplicemente non
+  risponde più. Non c'è nessun contratto, nessun vincolo e nessun abbonamento da disdire
+  oltre a quello dell'hosting.</p>
+
+  <footer>
+    Se volete capirci di più, chiedete a lui di aprirvi <b>RESOCONTO.html</b>: c'è tutto
+    il progetto spiegato per intero, comprese le cose che <em>non</em> funzionano.
+    È stato lui a volerle scritte.
+  </footer>
+
+</div>
+</body>
+</html>

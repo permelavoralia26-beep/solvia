@@ -1,0 +1,81 @@
+# Configurazione per Render (render.com).
+# New → Blueprint → seleziona il repository: Render legge questo file e configura tutto.
+services:
+  - type: web
+    name: solvia
+    runtime: node
+
+    # ATTENZIONE — questo NON può essere "free".
+    # Il piano gratuito di Render non ammette dischi persistenti: senza disco, il
+    # database sta su un filesystem che si azzera a ogni riavvio, a ogni nuovo
+    # deploy e dopo ogni sospensione per inattività. Account, clienti e fatture
+    # sparirebbero senza un errore, il che è molto peggio di un deploy fallito.
+    # "starter" è il piano più economico che permette il disco. Se vuoi provare a
+    # costo zero, togli TUTTA la sezione "disk" qui sotto e metti plan: free —
+    # sapendo che ogni riavvio riparte da un database vuoto.
+    plan: starter
+    # "build:pages" rigenera privacy, cookie e termini con i tuoi dati (le
+    # variabili SOLVIA_TITOLARE e compagnia qui sotto): così le pagine legali
+    # sono aggiornate a ogni deploy senza toccare il codice.
+    buildCommand: npm ci && npm run build:pages
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SOLVIA_SECRET
+        generateValue: true      # Render genera un segreto casuale e lo mantiene
+      - key: SOLVIA_DATA_DIR
+        value: /var/data
+      # Progetto gratuito: nessun prezzo esposto, nessun piano da comprare,
+      # nessun pagamento da incassare — e quindi nessun obbligo fiscale da
+      # rispettare. Al posto del listino il sito mostra la domanda "quanto
+      # pagheresti?", che raccoglie l'informazione senza raccogliere denaro.
+      # Il giorno in cui si potrà vendere davvero: metti "true" e riappare tutto.
+      - key: SOLVIA_COMMERCIAL
+        value: "false"
+      # I tuoi dati nelle pagine legali. Render li chiede al primo deploy
+      # (sync: false) e li usa in fase di build per generare privacy, cookie e
+      # termini. Finché restano vuoti, le pagine mostrano "[Nome e Cognome]".
+      - key: SOLVIA_TITOLARE
+        sync: false
+      - key: SOLVIA_CONTATTO_EMAIL
+        sync: false
+      - key: SOLVIA_INDIRIZZO
+        sync: false
+      - key: SOLVIA_HOSTING
+        value: Render
+      # Sostegno volontario ("offrimi un caffè"). Lasciali vuoti e sul sito non
+      # compare niente. Per accenderlo servono ENTRAMBI: l'indirizzo del profilo
+      # su una piattaforma riconosciuta e il nome di chi riceve davvero i soldi.
+      - key: SOLVIA_SOSTIENI_URL
+        sync: false
+      - key: SOLVIA_SOSTIENI_NOME
+        sync: false
+      # Indirizzo della console di direzione: cambialo con qualcosa che solo tu
+      # conosci. sync: false lo tiene fuori dal repository.
+      - key: SOLVIA_CONSOLE_PATH
+        sync: false
+      # Pre-lancio: serve solo quando la parte commerciale è accesa ma i
+      # pagamenti non sono ancora aperti (prezzi visibili, pulsanti che
+      # raccolgono email). Con SOLVIA_COMMERCIAL=false non ha alcun effetto.
+      - key: SOLVIA_PRELANCIO
+        value: "false"
+      # I quattro valori di Stripe. sync: false significa che Render li chiede a te
+      # al primo deploy e li tiene nel suo archivio cifrato: non finiscono mai su
+      # GitHub e non vanno incollati da nessun'altra parte. Lasciali vuoti finché
+      # non hai l'account: l'app parte lo stesso in modalità simulazione.
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_PRO
+        sync: false
+      - key: STRIPE_PRICE_TEAM
+        sync: false
+    # Disco persistente: è ciò che tiene in vita il database fra un deploy e l'altro.
+    # Richiede un piano a pagamento (vedi la nota su "plan" più sopra).
+    disk:
+      name: solvia-data
+      mountPath: /var/data
+      sizeGB: 1

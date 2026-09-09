@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solvia — resoconto completo</title>
+<style>
+  :root{
+    --ink:#0F172A; --ink-2:#334155; --muted:#64748B; --border:#E2E8F0;
+    --bg:#F8FAFC; --surface:#FFFFFF; --primary:#4F46E5; --primary-soft:#EEF2FF;
+    --accent:#0D9488; --accent-soft:#CCFBF1; --warn:#B45309; --warn-soft:#FEF3C7;
+    --danger:#BE123C; --danger-soft:#FFE4E6;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    line-height:1.65;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:900px;margin:0 auto;padding:34px 20px 80px;}
+
+  /* ---------- Testata ---------- */
+  header{background:linear-gradient(160deg,#4F46E5 0%,#6D28D9 55%,#4338CA 100%);
+    color:#fff;padding:52px 20px 56px;}
+  .head-in{max-width:900px;margin:0 auto;}
+  .logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:22px;margin-bottom:22px;}
+  .logo svg{width:42px;height:42px;border-radius:11px;}
+  header h1{font-size:clamp(28px,6vw,40px);margin:0 0 12px;line-height:1.2;letter-spacing:-.02em;}
+  /* Il colore va dichiarato qui: la regola generica "p" lo porterebbe a grigio
+     scuro, illeggibile sul viola. */
+  header p{font-size:17px;margin:0;color:#fff;opacity:.94;max-width:60ch;}
+  .kicker{display:inline-block;background:rgba(255,255,255,.18);border-radius:999px;
+    padding:5px 14px;font-size:12.5px;font-weight:700;letter-spacing:.04em;
+    text-transform:uppercase;margin-bottom:16px;}
+
+  /* ---------- Numeri ---------- */
+  .numbers{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;
+    margin-bottom:44px;}
+  .num{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:20px;box-shadow:0 1px 3px rgba(15,23,42,.06);}
+  .num b{display:block;font-size:30px;font-weight:800;letter-spacing:-.02em;color:var(--primary);}
+  .num span{font-size:13px;color:var(--muted);}
+
+  /* ---------- Sezioni ---------- */
+  section{margin-bottom:46px;}
+  h2{font-size:24px;margin:0 0 6px;letter-spacing:-.015em;display:flex;align-items:center;gap:11px;}
+  h2 .n{width:29px;height:29px;border-radius:9px;background:var(--primary);color:#fff;
+    font-size:14px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;
+    flex-shrink:0;}
+  .sub{color:var(--muted);font-size:15px;margin:0 0 20px;padding-left:40px;}
+  h3{font-size:16.5px;margin:26px 0 8px;}
+  p{margin:0 0 14px;color:var(--ink-2);}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:22px 24px;margin-bottom:14px;box-shadow:0 1px 3px rgba(15,23,42,.05);}
+  .card h3{margin-top:0;}
+  .card p:last-child{margin-bottom:0;}
+
+  /* ---------- Cronologia ---------- */
+  .time{position:relative;padding-left:26px;}
+  .time::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:2px;
+    background:linear-gradient(var(--primary),var(--accent));border-radius:2px;}
+  .ev{position:relative;margin-bottom:22px;}
+  .ev::before{content:'';position:absolute;left:-26px;top:7px;width:14px;height:14px;
+    border-radius:50%;background:var(--surface);border:3px solid var(--primary);}
+  .ev .say{font-style:italic;color:var(--primary);font-weight:600;font-size:14.5px;
+    margin-bottom:5px;}
+  .ev .did{font-size:14.5px;color:var(--ink-2);}
+
+  /* ---------- Elenchi ---------- */
+  ul{margin:0 0 14px;padding-left:20px;color:var(--ink-2);}
+  li{margin-bottom:7px;}
+  ul.clean{list-style:none;padding-left:0;}
+  ul.clean li{display:flex;gap:11px;align-items:flex-start;margin-bottom:11px;}
+  .tick{width:20px;height:20px;border-radius:50%;background:var(--accent-soft);color:#0F766E;
+    font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:2px;}
+  .cross{width:20px;height:20px;border-radius:50%;background:var(--danger-soft);color:var(--danger);
+    font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;margin-top:2px;}
+
+  /* ---------- Tabelle ---------- */
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:14px;}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;min-width:460px;}
+  th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--border);
+    vertical-align:top;}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);
+    font-weight:700;background:var(--bg);}
+  td strong{font-weight:650;}
+  tr:last-child td{border-bottom:none;}
+
+  /* ---------- Riquadri ---------- */
+  .box{border-radius:12px;padding:17px 20px;margin-bottom:16px;font-size:14.5px;line-height:1.7;}
+  .box strong{display:block;margin-bottom:4px;}
+  .box.warn{background:var(--warn-soft);color:#78350F;}
+  .box.ok{background:var(--accent-soft);color:#134E4A;}
+  .box.info{background:var(--primary-soft);color:#312E81;}
+  .box.bad{background:var(--danger-soft);color:#881337;}
+
+  code{background:var(--bg);border:1px solid var(--border);padding:1px 6px;border-radius:5px;
+    font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    word-break:break-word;}
+
+  pre{background:var(--bg);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;overflow-x:auto;font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin:14px 0;}
+
+  .bug{border-left:3px solid var(--danger);padding-left:16px;margin-bottom:20px;}
+  .bug b{display:block;font-size:15px;margin-bottom:3px;}
+  .bug span{font-size:14px;color:var(--ink-2);}
+
+  footer{text-align:center;color:var(--muted);font-size:13.5px;padding-top:30px;
+    border-top:1px solid var(--border);}
+
+  @media (max-width:640px){
+    header{padding:38px 18px 44px;}
+    .card{padding:18px;}
+    h2{font-size:21px;}
+    .sub{padding-left:0;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-in">
+    <div class="logo">
+      <svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="rgba(255,255,255,.15)"/><path d="M34 14 L20 36 H30 L28 50 L44 28 H34 L34 14 Z" fill="#fff"/><circle cx="47" cy="17" r="3.2" fill="#5EEAD4"/></svg>
+      Solvia
+    </div>
+    <span class="kicker">Resoconto completo</span>
+    <h1>Da "creami una start up" a un prodotto che sta in piedi</h1>
+    <p>Un copilota per il lavoro amministrativo di chi lavora da solo: smista le email,
+       prepara preventivi e fatture, dice quante tasse mettere da parte. Ecco tutto quello
+       che è stato costruito, cosa funziona davvero e cosa manca ancora.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="numbers">
+    <div class="num"><b>24.134</b><span>righe di codice scritte</span></div>
+    <div class="num"><b>588</b><span>test automatici, tutti verdi</span></div>
+    <div class="num"><b>104</b><span>endpoint API</span></div>
+    <div class="num"><b>19</b><span>tabelle nel database</span></div>
+    <div class="num"><b>16</b><span>pagine web</span></div>
+    <div class="num"><b>0</b><span>funzioni finte o mockup</span></div>
+  </div>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">1</span> L'idea</h2>
+    <p class="sub">A chi serve, e perché dovrebbe pagare 19 € al mese.</p>
+
+    <div class="card">
+      <p><strong>Il problema.</strong> Un freelance o una micro-impresa passa ore ogni settimana
+      su lavoro che non fattura: leggere email e capire quali sono urgenti, scrivere preventivi,
+      trasformarli in fatture, rincorrere chi non paga, e alla fine dell'anno scoprire di non
+      aver messo da parte abbastanza per le tasse.</p>
+
+      <p><strong>La risposta di Solvia.</strong> Un'unica applicazione che fa da filtro e da
+      memoria. L'inbox viene classificata per categoria e urgenza con le bozze di risposta già
+      pronte. I preventivi nascono da una descrizione in italiano — "restyling sito, 8 pagine,
+      4000 euro" diventa un documento con le voci compilate. Il cliente lo apre da un link,
+      lo firma col dito dal telefono e l'accettazione crea da sola l'attività "emetti fattura".
+      Le fatture scadute generano solleciti dal tono crescente, che però parte solo dopo la tua
+      approvazione. E in ogni momento c'è un numero, in alto: <em>quanto di quello che hai
+      incassato non è tuo.</em></p>
+
+      <p><strong>Perché uno pagherebbe.</strong> Non per l'ennesimo gestionale, ma per tre cose
+      che gli strumenti generici non fanno: il preventivo firmabile in trenta secondi dal telefono
+      del cliente, il sollecito che parte da solo senza che tu debba fare la figura di quello che
+      chiede i soldi, e la stima delle tasse aggiornata sull'incassato reale — non a marzo
+      dell'anno dopo.</p>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">2</span> Come ci siamo arrivati</h2>
+    <p class="sub">Ogni svolta è partita da una tua correzione. Erano tutte giuste.</p>
+
+    <div class="time">
+      <div class="ev">
+        <div class="say">"Creami una start up, crea un sito e tutto in autonomia"</div>
+        <div class="did">Scelto il settore (produttività per freelance italiani), il nome,
+        l'identità, e costruita la prima landing page.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Al momento è solo landing page. Devi farlo bene che funzioni"</div>
+        <div class="did">La svolta più importante. Buttata via la vetrina, costruita
+        l'applicazione vera: database, account, preventivi, fatture, PDF, assistente.
+        Da qui in poi niente è più una finta.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Come pagano me?"</div>
+        <div class="did">Integrato Stripe per intero — checkout, abbonamenti, webhook firmati,
+        disdetta. E detta la verità scomoda: in Italia per incassare serve la partita IVA.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Metti GDPR, privacy, e una newsletter VERA"</div>
+        <div class="did">Esportazione e cancellazione dati, tre pagine legali scritte su misura,
+        e una newsletter con doppia conferma e prova del consenso — non un modulo che raccoglie
+        indirizzi e basta.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Arricchisci il sito. Devono pagare 19 euro ma dire caaazzzo che bello"</div>
+        <div class="did">Aggiunte le funzioni che giustificano il prezzo: firma col dito,
+        portale cliente, cronometro ore, fatture ricorrenti, spese, tema scuro, ricerca globale,
+        app installabile, riepilogo annuale in PDF.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Ho un tablet Samsung, niente PC"</div>
+        <div class="did">Scritto un installatore per Termux che fa tutto da solo, e reso
+        opzionale il modulo database che su Android non si compila. Solvia gira sul tablet.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Annulla, è una cagata. NO CAGATE, ROBA SERIA"</div>
+        <div class="did">Avevo proposto una modalità donazioni per aggirare la P.IVA. Avevi
+        ragione: era una mezza misura. Rimossa senza lasciare traccia, e al suo posto una
+        diagnostica che verifica la configurazione Stripe interrogando Stripe davvero.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Metti la roba accesso account. Passano a una dashboard diversa"</div>
+        <div class="did">Chi si registra ora atterra su una schermata di benvenuto in tre passi,
+        non su una dashboard piena di clienti finti. Più recupero password, cambio password
+        e blocco dei tentativi ripetuti.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Struttura quello da 49"</div>
+        <div class="did">Il piano Team prometteva "fino a 5 utenti" senza una riga di codice
+        dietro. Ora esiste: studio condiviso, stessi clienti e fatture per tutti, ogni azione
+        firmata da chi l'ha fatta, inviti e revoche in un clic.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Voglio vedere chi ha pagato, chi ha schiacciato cosa"</div>
+        <div class="did">Statistiche in casa: visite, provenienze, chi arriva ai prezzi, cosa
+        preme, chi si registra, chi paga. Senza cookie e senza conservare un solo indirizzo IP.</div>
+      </div>
+      <div class="ev">
+        <div class="say">"Non deve apparire ai clienti. Piattaforma diversa"</div>
+        <div class="did">Giusto: non è una funzione del prodotto. Tolta dall'applicazione e
+        spostata su una console a sé, su un indirizzo suo, che a chi non ha diritto risponde
+        404 come un indirizzo che non esiste.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">3</span> Cosa c'è dentro</h2>
+    <p class="sub">Tutto quello elencato qui esiste, funziona ed è coperto da test.</p>
+
+    <div class="scroll">
+    <table>
+      <tr><th>Sezione</th><th>Cosa fa</th></tr>
+      <tr><td><strong>Benvenuto</strong></td><td>Tre passi al primo accesso: account vuoto o con dati d'esempio, dati dell'attività, regime fiscale. Poi una checklist che sparisce da sola.</td></tr>
+      <tr><td><strong>Dashboard</strong></td><td>Incassato del mese, crediti aperti e scaduti, grafico a sei mesi, quanto accantonare per il fisco, prossime attività.</td></tr>
+      <tr><td><strong>Inbox</strong></td><td>Classifica le email per categoria e urgenza, prepara le bozze di risposta, le trasforma in attività o preventivi.</td></tr>
+      <tr><td><strong>Preventivi</strong></td><td>Nascono da una descrizione in italiano. Link condivisibile, accettazione online, firma col dito, registrazione di data, ora e IP.</td></tr>
+      <tr><td><strong>Fatture</strong></td><td>IVA e ritenuta d'acconto, numerazione progressiva per anno, rilevamento scadute, export PDF impaginato.</td></tr>
+      <tr><td><strong>Ore</strong></td><td>Cronometro per cliente. Le ore registrate diventano una fattura da sole, con le voci uguali raggruppate.</td></tr>
+      <tr><td><strong>Ricorrenti</strong></td><td>Abbonamenti clienti che generano la fattura alla scadenza, con il ricavo mensile ricorrente a colpo d'occhio.</td></tr>
+      <tr><td><strong>Solleciti</strong></td><td>Tre livelli di tono crescente in base ai giorni di ritardo. Preparati in automatico, inviati solo dopo la tua approvazione.</td></tr>
+      <tr><td><strong>Spese</strong></td><td>Registrazione per categoria con la distribuzione a barre, per sapere quanto resta davvero.</td></tr>
+      <tr><td><strong>Tasse</strong></td><td>Coefficiente di redditività, imposta sostitutiva 5% o 15%, contributi (Gestione Separata, Artigiani, Commercianti, casse), riduzione del 35%.</td></tr>
+      <tr><td><strong>Clienti</strong></td><td>Anagrafica con fatturato per cliente e portale personale: il cliente vede i suoi documenti senza registrarsi. Le bozze non compaiono.</td></tr>
+      <tr><td><strong>Newsletter</strong></td><td>Iscrizione con doppia conferma, prova del consenso, gestione iscritti, scrittura e invio delle campagne.</td></tr>
+      <tr><td><strong>Studio</strong></td><td>Piano Team: fino a cinque persone sullo stesso archivio, inviti per email, ruoli, ogni azione firmata da chi l'ha fatta.</td></tr>
+      <tr><td><strong>Impostazioni</strong></td><td>Dati aziendali, cambio password, riepilogo annuale in PDF, esportazione dati, cancellazione account, diagnostica pagamenti.</td></tr>
+    </table>
+    </div>
+
+    <p>Più, trasversali a tutto: <strong>ricerca globale</strong> con Ctrl/Cmd + K,
+    <strong>tema scuro</strong> ricordato sul profilo, <strong>app installabile</strong> sulla
+    schermata home di telefono e tablet, e un <strong>riepilogo annuale in PDF</strong> da
+    girare al commercialista.</p>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">4</span> La tua console, separata da tutto</h2>
+    <p class="sub">Come vedi l'andamento senza che i clienti sappiano che esiste.</p>
+
+    <div class="card">
+      <p>Solvia gira su un indirizzo, la tua console su un altro. Stesso server, stesso
+      database, due piattaforme che non si parlano: dall'applicazione non c'è nessun modo
+      di arrivare alla console, e nel suo codice la console non è nemmeno nominata.</p>
+
+      <div class="scroll">
+      <table>
+        <tr><th>Cosa</th><th>Dove</th><th>Chi ci entra</th></tr>
+        <tr><td>Sito pubblico e applicazione</td><td><code>/</code> e <code>/app</code></td><td>Chiunque</td></tr>
+        <tr><td>Console di direzione</td><td><code>/console</code> (spostabile)</td><td>Solo tu</td></tr>
+      </table>
+      </div>
+
+      <p>Dentro la console: quante persone arrivano e da dove, chi scorre fino ai prezzi,
+      quali pulsanti preme, quali domande frequenti apre; poi quanti account nascono, quanti
+      si fermano al benvenuto, chi paga, quanto entra al mese, chi disdice. Con un flusso in
+      diretta che si aggiorna da solo.</p>
+
+      <div class="box info">
+        <strong>Nascosta sul serio, non solo non linkata</strong>
+        La pagina sta fuori dai file statici, quindi non si trova indovinando un indirizzo.
+        A chi non ha diritto risponde <strong>404, non 403</strong>, con una risposta identica
+        byte per byte a quella di un indirizzo inventato — un "vietato" direbbe comunque "qui
+        c'è qualcosa". Perfino il nome del prodotto arriva dal server solo a chi è autorizzato.
+      </div>
+
+      <div class="box ok">
+        <strong>Statistiche senza spiare nessuno</strong>
+        L'indirizzo IP non viene mai scritto: si conserva solo un'impronta crittografica che
+        cambia ogni giorno. La stessa persona domani è un'impronta diversa, quindi non è
+        seguibile nel tempo — nemmeno da te. Niente cookie, niente servizi esterni, e chi
+        attiva "Do Not Track" non viene contato affatto.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">5</span> Com'è fatto sotto</h2>
+    <p class="sub">Le scelte tecniche che contano, e il perché.</p>
+
+    <div class="scroll">
+    <table>
+      <tr><th>Pezzo</th><th>Scelta</th><th>Perché</th></tr>
+      <tr><td>Server</td><td>Node.js + Express 5</td><td>Un solo linguaggio dal database al browser.</td></tr>
+      <tr><td>Database</td><td>SQLite, un file</td><td>Niente da amministrare. Il backup è copiare un file.</td></tr>
+      <tr><td>Driver</td><td><code>better-sqlite3</code> opzionale, con ricaduta su <code>node:sqlite</code></td><td>Su Android il primo non si compila. Senza questa scelta, Solvia non partirebbe sul tuo tablet.</td></tr>
+      <tr><td>Sessioni</td><td>JWT in cookie <code>httpOnly</code></td><td>Il codice della pagina non può leggerlo: se qualcuno inietta uno script, la sessione non se la porta via.</td></tr>
+      <tr><td>Password</td><td>bcrypt, mai in chiaro</td><td>Nemmeno chi amministra il server può risalire alla password.</td></tr>
+      <tr><td>Interfaccia</td><td>JavaScript puro, zero librerie</td><td>Nessuna dipendenza che invecchia, nessuna build. Si apre e funziona.</td></tr>
+      <tr><td>PDF</td><td>PDFKit, generati dal server</td><td>Stesso risultato ovunque, non dipende dal browser di chi scarica.</td></tr>
+      <tr><td>Email</td><td>SMTP con ricaduta su archivio locale</td><td>Senza SMTP le email finiscono in <code>data/outbox/</code>: si collauda tutto senza rischiare invii veri.</td></tr>
+      <tr><td>Offline</td><td>Service worker che <em>non</em> mette in cache le API</td><td>Un dato finanziario vecchio è peggio di nessun dato.</td></tr>
+    </table>
+    </div>
+
+    <div class="box info">
+      <strong>Una decisione che vale la pena spiegare</strong>
+      Il webhook di Stripe è montato <em>prima</em> del lettore JSON. La verifica della firma
+      richiede il corpo grezzo della richiesta: se il JSON viene interpretato prima, la firma
+      non torna e ogni evento viene rifiutato. È l'errore più comune con Stripe, ed è il motivo
+      per cui molti abbonamenti "non si attivano" senza che nessuno capisca perché.
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">6</span> I 588 test</h2>
+    <p class="sub">Non sono decorazione: hanno trovato bug veri, elencati qui sotto.</p>
+
+    <div class="scroll">
+    <table>
+      <tr><th>Suite</th><th>N.</th><th>Cosa verifica</th></tr>
+      <tr><td>sintassi</td><td>56 file</td><td>Ogni file JS, incluso quello scritto dentro le pagine HTML</td></tr>
+      <tr><td>api</td><td>35</td><td>Calcoli, permessi, PDF, isolamento fra account</td></tr>
+      <tr><td>account</td><td>47</td><td>Primo accesso, cambio e recupero password, sessioni</td></tr>
+      <tr><td>studio</td><td>43</td><td>Piano Team: inviti, dati condivisi, permessi, uscita</td></tr>
+      <tr><td>direzione</td><td>45</td><td>Statistiche, imbuto, conto economico, console nascosta</td></tr>
+      <tr><td>newsletter</td><td>50</td><td>Doppia conferma, disiscrizione, GDPR, pagine legali</td></tr>
+      <tr><td>extra</td><td>46</td><td>Ore, portale cliente, firma, riepilogo annuale</td></tr>
+      <tr><td>pro</td><td>45</td><td>Preventivi condivisi, solleciti, ricorrenti, tasse, spese</td></tr>
+      <tr><td>billing</td><td>23</td><td>Piani e limiti d'uso applicati sul server</td></tr>
+      <tr><td>webhook</td><td>18</td><td>Firme Stripe reali e ciclo di vita dell'abbonamento</td></tr>
+      <tr><td>pre-lancio</td><td>19</td><td>Prezzi visibili, incassi chiusi, lista d'attesa</td></tr>
+      <tr><td>diagnostica</td><td>18</td><td>La diagnostica riconosce gli errori di configurazione</td></tr>
+      <tr><td>controllo</td><td>27</td><td>Il controllo prima del volo, e che le pagine legali dicano la verità</td></tr>
+      <tr><td>sondaggio</td><td>40</td><td>Progetto gratuito, domanda sul prezzo, sostegno volontario</td></tr>
+      <tr><td>browser</td><td>132</td><td>Dieci suite su Chromium vero, compresi telefono e tablet</td></tr>
+    </table>
+    </div>
+
+    <p>I test browser aprono un browser vero, cliccano, compilano moduli, scaricano PDF e
+    controllano che non ci siano errori in console. Quelli su schermo da tablet simulano il
+    dito: la firma sul preventivo è testata con eventi touch reali.</p>
+
+    <div class="box ok">
+      <strong>Il test che preferisco</strong>
+      Dopo aver chiesto un recupero password, una prova rilegge il file del database e verifica
+      che il token del link <em>non ci sia</em> in chiaro. Non basta scrivere codice sicuro:
+      va dimostrato che lo è rimasto.
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">7</span> Bug veri, trovati e sistemati</h2>
+    <p class="sub">Nessuno di questi era visibile guardando lo schermo.</p>
+
+    <div class="card">
+      <div class="bug">
+        <b>La home vendeva un piano che l'API non conosceva</b>
+        <span>La pagina pubblica mostrava "Pro 19 €/mese", ma i pagamenti erano spenti lato
+        server: chi cliccava "Passa a Pro" non trovava nulla. Due parti dello stesso prodotto
+        che si contraddicevano.</span>
+      </div>
+      <div class="bug">
+        <b>Password sbagliata = disconnessione</b>
+        <span>Sbagliare a digitare la password di conferma restituiva un 401, che il client
+        interpreta come "sessione scaduta": ti buttava fuori. Ora risponde 403, e c'è un test
+        che controlla proprio il codice numerico.</span>
+      </div>
+      <div class="bug">
+        <b>Un apostrofo rompeva tutta la pagina</b>
+        <span>Un <code>L\'operazione</code> mal protetto dentro una stringa spegneva ogni
+        funzione JavaScript del pannello newsletter. Ora un test estrae e valida il codice
+        dentro ogni file HTML: questo tipo di errore non può più passare inosservato.</span>
+      </div>
+      <div class="bug">
+        <b>3200,00 € nel PDF, 3.200,00 € a schermo</b>
+        <span>Lo stesso importo formattato in due modi diversi, per un valore predefinito
+        nascosto della formattazione numerica. Su un documento fiscale è il genere di dettaglio
+        che fa perdere fiducia.</span>
+      </div>
+      <div class="bug">
+        <b>Il tasto Indietro del browser non faceva niente</b>
+        <span>Mancava del tutto l'ascolto del cambio indirizzo. Su un tablet, dove il gesto
+        indietro è il modo naturale di muoversi, era una funzione mancante travestita da nulla.</span>
+      </div>
+      <div class="bug">
+        <b>Testo grigio su viola, illeggibile</b>
+        <span>Un'etichetta della schermata di benvenuto perdeva il colore per una regola CSS
+        più specifica. Ora un test legge il colore calcolato dal browser e lo confronta con
+        lo sfondo.</span>
+      </div>
+      <div class="bug">
+        <b>Dietro il proxy, tutti lo stesso indirizzo</b>
+        <span>Senza <code>trust proxy</code>, su Render ogni richiesta sembra venire dallo
+        stesso IP: il blocco dopo cinque tentativi falliti avrebbe bloccato tutti gli utenti
+        insieme.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">8</span> I soldi</h2>
+    <p class="sub">Come si incassa, e l'unico ostacolo che resta.</p>
+
+    <div class="card">
+      <p><strong>Stripe è integrato per intero</strong> — checkout, abbonamenti mensili, webhook
+      con firma verificata, disdetta dal portale del cliente, limiti del piano gratuito applicati
+      sul server e non nascondendo pulsanti. Senza chiavi l'app gira in <strong>simulazione</strong>:
+      il percorso completo funziona ma non incassa nulla, e puoi provarlo adesso.</p>
+
+      <p>Il giorno che colleghi l'account, non si tocca una riga di codice: si compilano quattro
+      variabili nel pannello dell'host. E in <em>Impostazioni → Verifica configurazione</em> c'è
+      un pulsante che interroga Stripe davvero — chiave valida, account abilitato a incassare,
+      prezzi esistenti e ricorrenti e in euro, webhook registrato con tutti gli eventi — e per
+      ogni problema stampa l'istruzione precisa per risolverlo.</p>
+
+      <h3>I quattro valori</h3>
+      <div class="scroll">
+      <table>
+        <tr><th>Valore</th><th>Segreto?</th></tr>
+        <tr><td><code>STRIPE_SECRET_KEY</code></td><td><strong>Sì.</strong> Chi ce l'ha può muovere soldi sul tuo account</td></tr>
+        <tr><td><code>STRIPE_WEBHOOK_SECRET</code></td><td><strong>Sì.</strong> Chi ce l'ha può fingere pagamenti mai avvenuti</td></tr>
+        <tr><td><code>STRIPE_PRICE_PRO</code></td><td>No, è solo l'identificativo di un listino</td></tr>
+        <tr><td><code>STRIPE_PRICE_TEAM</code></td><td>No</td></tr>
+      </table>
+      </div>
+
+      <div class="box warn">
+        <strong>I due segreti non si incollano mai in una chat</strong>
+        Nemmeno a me. Vanno nel pannello del tuo host: <code>render.yaml</code> li dichiara già
+        con <code>sync: false</code>, quindi Render te li chiede al primo deploy e li tiene nel
+        suo archivio cifrato, fuori da GitHub. Se un segreto ti scappa, si revoca e si rigenera
+        in dieci secondi dalla dashboard.
+      </div>
+
+      <div class="box bad">
+        <strong>L'unico ostacolo che non posso aggirare</strong>
+        Stripe in Italia richiede la <strong>partita IVA</strong> alla registrazione. E nessun
+        servizio alternativo la evita legittimamente: un incasso mensile ricorrente è per legge
+        attività "abituale", quindi richiede P.IVA a prescindere dalla piattaforma. Ho verificato,
+        non è un'opinione. Tutto il resto è pronto e ti aspetta.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">9</span> Pubblicarlo dal telefono</h2>
+    <p class="sub">Senza PC: dall'iPhone o dal tablet Android.</p>
+
+    <div class="card">
+      <p>Nel pacchetto c'è già un <strong>repository git completo</strong> con otto commit di
+      storia: si carica su GitHub senza ricostruire niente. Dentro trovi due script che fanno
+      il lavoro da soli, più le guide passo passo.</p>
+      <ul class="clean">
+        <li><span class="tick">✓</span><div><strong>IPHONE.md</strong> — fare tutto dall'iPhone: modifiche, push e deploy dal telefono</div></li>
+        <li><span class="tick">✓</span><div><strong>SAMSUNG.md</strong> — installazione con Termux sul tablet Android, comando per comando</div></li>
+        <li><span class="tick">✓</span><div><strong>samsung.sh</strong> — trova lo zip nelle Download, installa, genera la chiave di sicurezza e avvia</div></li>
+        <li><span class="tick">✓</span><div><strong>github.sh</strong> — carica il progetto su GitHub e si rifiuta di procedere se trova file che non devono uscire</div></li>
+        <li><span class="tick">✓</span><div><strong>PUBBLICARE.md</strong> — mettere il sito online, dominio, email, backup</div></li>
+        <li><span class="tick">✓</span><div><strong>STRIPE.md</strong> — collegare l'account quando avrai la P.IVA</div></li>
+        <li><span class="tick">✓</span><div><strong>render.yaml</strong>, <strong>fly.toml</strong>, <strong>Dockerfile</strong> — configurazioni di pubblicazione già pronte</div></li>
+      </ul>
+
+      <div class="box warn">
+        <strong>Il piano gratuito di Render non regge i dati veri</strong>
+        Non ammette dischi persistenti, e senza disco il database si azzera a ogni riavvio,
+        a ogni deploy e dopo ogni sospensione per inattività — senza dare nessun errore.
+        La configurazione è impostata sul piano più economico che permette il disco. Il
+        free va bene per far vedere il sito a qualcuno, non per farci entrare persone vere.
+      </div>
+
+      <div class="box info">
+        <strong>Netlify e GitHub Pages non vanno bene</strong>
+        Ospitano solo file statici. Solvia ha bisogno di un processo Node acceso e di un disco
+        che non si svuoti a ogni pubblicazione, altrimenti il database sparisce. Render con
+        disco persistente è la strada più semplice, ed è già configurata.
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">10</span> Il controllo prima del volo</h2>
+    <p class="sub">Gli errori peggiori di una messa online non danno errore.</p>
+
+    <div class="card">
+      <p>Un database che si azzera a ogni deploy, le sessioni che cadono a ogni riavvio,
+      la pagina privacy che mostra <em>"[Nome e Cognome]"</em> a un potenziale cliente:
+      nessuna di queste cose fa fallire niente. Danno un sito che <em>sembra</em>
+      funzionare. Per questo c'è un comando che le cerca al posto tuo.</p>
+
+      <pre>npm run controllo</pre>
+
+      <p>Distingue ciò che è <strong>rotto</strong> (rosso: non pubblicare) da ciò che è
+      <strong>da sistemare</strong> (giallo: pubblica pure, ma sappilo), e sotto ogni riga
+      scrive l'istruzione precisa. Gira anche da solo all'avvio in produzione, così il primo
+      log dopo un deploy dice subito se qualcosa non torna.</p>
+
+      <ul class="clean">
+        <li><span class="tick">✓</span><div>Chiave delle sessioni: senza, tutti vengono disconnessi a ogni riavvio</div></li>
+        <li><span class="tick">✓</span><div>Cartella dati: se non è su un disco persistente, il database si azzera in silenzio</div></li>
+        <li><span class="tick">✓</span><div>Console ancora sull'indirizzo predefinito</div></li>
+        <li><span class="tick">✓</span><div>Segnaposto rimasti nelle pagine legali</div></li>
+        <li><span class="tick">✓</span><div>Prezzi esposti senza un incasso configurato — o pre-lancio acceso con Stripe già collegato</div></li>
+        <li><span class="tick">✓</span><div>SMTP mancante: le email non partono davvero</div></li>
+        <li><span class="tick">✓</span><div>Nessun amministratore: nessuno può aprire la console</div></li>
+      </ul>
+
+      <h3>Le pagine legali non si modificano più a mano</h3>
+      <p>Privacy, cookie e termini sono <strong>generate</strong>: imposti
+      <code>SOLVIA_TITOLARE</code>, <code>SOLVIA_CONTATTO_EMAIL</code> e
+      <code>SOLVIA_INDIRIZZO</code> e si riscrivono da sole — su Render a ogni deploy.
+      E ora dicono la verità su un servizio a pagamento: abbonamento, rinnovo automatico,
+      disdetta libera, recesso di 14 giorni, 30 giorni di preavviso sui cambi di prezzo.</p>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">11</span> Cosa manca</h2>
+    <p class="sub">Detto chiaro, così non ci sono sorprese.</p>
+
+    <div class="card">
+      <ul class="clean">
+        <li><span class="cross">✗</span><div><strong>Lettura della casella di posta.</strong> Le email nell'inbox si inseriscono a mano o arrivano dai dati d'esempio. Collegare Gmail o Outlook richiede l'autorizzazione OAuth, che a sua volta richiede un dominio verificato.</div></li>
+        <li><span class="cross">✗</span><div><strong>Fatturazione elettronica allo SDI.</strong> I PDF sono corretti e completi, ma l'invio al Sistema di Interscambio richiede un intermediario accreditato. Per ora si passa dal commercialista.</div></li>
+        <li><span class="cross">✗</span><div><strong>Invio automatico dei solleciti.</strong> I testi vengono preparati e sono pronti; per farli partire davvero servono le credenziali SMTP di una casella reale.</div></li>
+        <li><span class="cross">✗</span><div><strong>L'account Stripe verificato.</strong> Dipende dalla partita IVA. È l'unica cosa che blocca l'incasso.</div></li>
+      </ul>
+      <p style="margin-top:6px">Nessuna di queste è una scorciatoia presa per fretta: sono tutte
+      cose che dipendono da un documento, un dominio o un contratto, non dal codice.</p>
+    </div>
+  </section>
+
+  <!-- ============================================== -->
+  <section>
+    <h2><span class="n">12</span> I prossimi tre passi</h2>
+    <p class="sub">Nell'ordine giusto.</p>
+
+    <div class="card">
+      <h3>1. Mettilo online</h3>
+      <p>Carica il progetto su GitHub con <code>github.sh</code>, poi collega Render:
+      legge <code>render.yaml</code> e configura tutto da solo. Da lì hai un indirizzo vero da
+      mandare in giro, e Solvia gira in simulazione — completa, senza incassare.</p>
+
+      <h3>2. Fallo usare a cinque persone</h3>
+      <p>Prima di qualsiasi cosa su Stripe. Cinque freelance veri che ci mettono i loro clienti
+      dentro ti diranno in una settimana cosa vale i 19 € e cosa non serve a nessuno.
+      Sono informazioni che non si ottengono in nessun altro modo.</p>
+
+      <h3>3. Poi la partita IVA e Stripe</h3>
+      <p>Quando ce l'hai: crei i due prodotti, incolli i quattro valori nel pannello di Render,
+      e premi <em>Verifica configurazione</em>. Se qualcosa non torna te lo dice con l'istruzione
+      per sistemarlo. Dal codice non serve toccare nulla.</p>
+    </div>
+  </section>
+
+  <footer>
+    Solvia — 24.134 righe, 588 test verdi, 22 commit.<br>
+    Resoconto aggiornato il 20 agosto 2026.
+  </footer>
+
+</div>
+</body>
+</html>

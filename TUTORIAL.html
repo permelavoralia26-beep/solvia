@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solvia — Come pubblicarlo, passo per passo</title>
+<style>
+  :root{
+    --bg:#F7F7F5; --card:#FFFFFF; --ink:#191917; --soft:#6B6B66; --line:#E5E4E0;
+    --acc:#4F46E5; --acc-soft:#EEF2FF;
+    --ok:#0F766E; --ok-soft:#D6F1EC; --warn:#B45309; --warn-soft:#FDF0D9;
+    --bad:#B91C1C; --bad-soft:#FBE3E3;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#151513; --card:#1E1E1B; --ink:#EFEEE9; --soft:#A3A29B; --line:#33322E;
+      --acc:#A5B4FC; --acc-soft:#232145;
+      --ok:#5EEAD4; --ok-soft:#123A36; --warn:#FBBF24; --warn-soft:#3A2E12;
+      --bad:#FCA5A5; --bad-soft:#3A1A1A;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.68;font-size:16.5px;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px 80px;}
+
+  header{background:var(--card);border-bottom:1px solid var(--line);padding:44px 0 34px;margin-bottom:30px;}
+  header .wrap{padding-bottom:0;}
+  .kicker{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--soft);font-weight:600;margin-bottom:12px;}
+  h1{margin:0 0 14px;font-size:31px;line-height:1.2;letter-spacing:-.02em;}
+  header p{margin:0;color:var(--soft);font-size:17px;}
+
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:.1em;color:var(--soft);
+    margin:44px 0 16px;font-weight:700;}
+  p{margin:0 0 15px;}
+  a{color:var(--acc);}
+
+  /* Un passo */
+  .passo{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:24px 22px;margin-bottom:16px;}
+  .passo-testa{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
+  .passo-n{flex:0 0 auto;width:36px;height:36px;border-radius:11px;background:var(--acc-soft);
+    color:var(--acc);font-weight:800;font-size:16px;
+    display:flex;align-items:center;justify-content:center;}
+  .passo-titolo{font-size:19px;font-weight:700;line-height:1.35;letter-spacing:-.01em;
+    margin:4px 0 0;}
+  .passo p:last-child{margin-bottom:0;}
+
+  .fai{margin:0 0 15px;padding-left:0;list-style:none;counter-reset:mini;}
+  .fai li{position:relative;padding-left:30px;margin-bottom:11px;counter-increment:mini;}
+  .fai li::before{content:counter(mini);position:absolute;left:0;top:1px;
+    width:21px;height:21px;border-radius:50%;background:var(--acc-soft);color:var(--acc);
+    font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+  .etichetta{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;color:var(--soft);margin:16px 0 7px;}
+  .etichetta:first-child{margin-top:0;}
+
+  .esito{background:var(--ok-soft);color:var(--ok);border-radius:11px;padding:13px 16px;
+    font-size:14.5px;line-height:1.55;margin-top:14px;}
+  .esito b{display:block;margin-bottom:3px;}
+
+  .box{border-radius:11px;padding:14px 17px;margin:14px 0 0;font-size:14.5px;line-height:1.58;}
+  .box b{display:block;margin-bottom:3px;}
+  .box.warn{background:var(--warn-soft);color:var(--warn);}
+  .box.bad{background:var(--bad-soft);color:var(--bad);}
+  .box.info{background:var(--acc-soft);color:var(--acc);}
+
+  code{background:var(--bg);border:1px solid var(--line);padding:1px 6px;border-radius:5px;
+    font-size:13.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;word-break:break-word;}
+  pre{background:var(--ink);color:var(--bg);border-radius:10px;padding:14px 16px;
+    overflow-x:auto;font-size:13.5px;line-height:1.7;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin:0 0 15px;}
+  pre code{background:none;border:none;padding:0;color:inherit;font-size:inherit;}
+
+  kbd{display:inline-block;background:var(--bg);border:1px solid var(--line);
+    border-bottom-width:2px;border-radius:6px;padding:0 6px;font-size:13px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+  .tasto{display:inline-block;background:var(--bg);border:1px solid var(--line);
+    border-bottom-width:2px;border-radius:7px;padding:1px 8px;font-size:14px;font-weight:600;
+    white-space:nowrap;}
+
+  .scelta{display:grid;gap:12px;margin-bottom:18px;}
+  @media (min-width:620px){.scelta{grid-template-columns:1fr 1fr;}}
+  .scelta a{display:block;background:var(--card);border:1.5px solid var(--line);
+    border-radius:14px;padding:18px 20px;text-decoration:none;color:var(--ink);}
+  .scelta a:hover{border-color:var(--acc);}
+  .scelta b{display:block;font-size:16.5px;margin-bottom:4px;}
+  .scelta span{font-size:14px;color:var(--soft);}
+
+  details.guasto{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:15px 18px;margin-bottom:10px;}
+  details.guasto summary{font-weight:600;cursor:pointer;list-style:none;font-size:15.5px;
+    display:flex;justify-content:space-between;gap:14px;align-items:center;}
+  details.guasto summary::-webkit-details-marker{display:none;}
+  details.guasto summary::after{content:"+";font-size:20px;color:var(--soft);}
+  details.guasto[open] summary::after{content:"–";}
+  details.guasto p{margin:12px 0 0;font-size:15px;}
+  details.guasto p:last-child{margin-bottom:0;}
+
+  footer{color:var(--soft);font-size:14px;border-top:1px solid var(--line);
+    padding-top:24px;margin-top:44px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="kicker">Solvia · tutorial completo</span>
+    <h1>Come mettere Solvia online</h1>
+    <p>Scritto dando per scontato <b>zero</b>. Ogni tasto da premere, ogni cosa che vedrai
+       sullo schermo, e cosa fare quando qualcosa non va come dice qui.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <h2>Prima di iniziare</h2>
+
+  <div class="passo">
+    <p><b>Cosa stai per fare:</b> prendere la cartella di Solvia che hai sul telefono o sul
+    computer e metterla su una macchina accesa 24 ore su 24 da qualche parte nel mondo,
+    così che chiunque possa aprirla scrivendo un indirizzo.</p>
+
+    <p><b>Quanto ci vuole:</b> circa 40 minuti la prima volta. Le volte dopo, tre minuti.</p>
+
+    <span class="etichetta">Ti serve</span>
+    <ul class="fai">
+      <li>Il file <code>Solvia.zip</code> (te l'ho mandato in chat)</li>
+      <li>Un computer, un tablet o un telefono con internet — va bene qualunque cosa</li>
+      <li>Un indirizzo email che sai aprire</li>
+      <li>Un genitore, ma solo per il <b>passo 6</b>. Fino a lì fai tutto da solo</li>
+    </ul>
+
+    <div class="box info">
+      <b>Non ti serve sapere niente di tecnico</b>
+      Se una parola non la conosci, è scritto qui sotto cosa vuol dire. Se un pulsante non
+      lo trovi, c'è scritto cosa cercare al suo posto.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">?</div>
+      <div class="passo-titolo">Tre parole che tornano sempre</div>
+    </div>
+    <p><b>Repository</b> (si dice <i>ripòsitori</i>) — una cartella online dove vive il codice.
+    Come una cartella di Google Drive, ma per programmi.</p>
+    <p><b>GitHub</b> — il sito che tiene quelle cartelle. Gratis.</p>
+    <p><b>Render</b> — il servizio che prende la cartella da GitHub e la fa diventare un sito
+    vero, raggiungibile da tutti.</p>
+    <p style="margin-bottom:0">In pratica: <b>tu → GitHub → Render → internet</b>.</p>
+  </div>
+
+  <h2>Da dove parti</h2>
+
+  <p>Ci sono tre strade, a seconda di cosa hai in mano. Fanno la stessa cosa: scegline una.</p>
+
+  <div class="scelta">
+    <a href="#computer">
+      <b>⚪ Da un computer</b>
+      <span>La più facile di tutte, e <b>non si installa niente</b>: basta il browser e
+      le funzioni che Windows ha già. <b>Se hai un PC, usa questa.</b></span>
+    </a>
+    <a href="#tablet">
+      <b>🟢 Dal tablet Samsung</b>
+      <span>Due comandi fanno quasi tutto, ma va installata un'app (Termux).</span>
+    </a>
+    <a href="#iphone">
+      <b>🔵 Dall'iPhone</b>
+      <span>Si può, ma serve un'app in più e vari passaggi a mano.</span>
+    </a>
+  </div>
+
+  <div class="box info">
+    <b>Il computer non è tuo e non puoi installare programmi?</b>
+    Non serve installare niente: <b>zero</b>. Windows scompatta gli zip da solo e il
+    resto si fa tutto dentro il browser, su due siti. Non resta niente sul computer
+    quando hai finito.
+  </div>
+
+  <!-- ══════════════════════════ COMPUTER ══════════════════════════ -->
+  <h2 id="computer">Strada bianca — da un computer, senza installare niente</h2>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">1</div>
+      <div class="passo-titolo">Scompatta lo zip</div>
+    </div>
+
+    <p>Windows lo fa da solo, non serve nessun programma.</p>
+
+    <ul class="fai">
+      <li>Scarica <code>Solvia.zip</code> dalla chat (finisce in <b>Download</b>)</li>
+      <li>Tasto destro sul file → <span class="tasto">Estrai tutto…</span> →
+          <span class="tasto">Estrai</span></li>
+      <li>Si apre una cartella <code>solvia</code> con dentro un'altra cartella
+          <code>solvia</code>: entra fino a vedere i file veri</li>
+    </ul>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Dentro vedi tanti file, fra cui <code>package.json</code>, <code>server.js</code>
+      e le cartelle <code>lib</code>, <code>routes</code>, <code>public</code>.
+      <b>Quella è la cartella che ti serve</b>: tienila aperta.
+    </div>
+
+    <div class="box warn">
+      <b>Su Mac</b>
+      Doppio clic sullo zip e basta: la cartella compare accanto ad esso.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">2</div>
+      <div class="passo-titolo">Crea l'account GitHub e il repository</div>
+    </div>
+
+    <ul class="fai">
+      <li>Vai su <code>github.com</code> → <span class="tasto">Sign up</span></li>
+      <li>Email, password, nome utente (scegline uno serio: te lo porti dietro per anni)</li>
+      <li>Conferma l'email che ti arriva</li>
+      <li>In alto a destra <span class="tasto">+</span> →
+          <span class="tasto">New repository</span></li>
+      <li>Nome: <code>solvia</code>. <b>Non</b> spuntare "Add a README" né ".gitignore":
+          ci sono già. Poi <span class="tasto">Create repository</span></li>
+    </ul>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Vedi una pagina quasi vuota intitolata <i>Quick setup</i>, con in mezzo un link
+      che dice <b>uploading an existing file</b>. È quello che ti serve.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">3</div>
+      <div class="passo-titolo">Carica i file trascinandoli — in due volte</div>
+    </div>
+
+    <p>GitHub accetta al massimo <b>100 file per volta</b> e Solvia ne ha 115. Quindi si
+    fa in due riprese. Non è un problema: sono due trascinamenti.</p>
+
+    <span class="etichetta">Primo carico — le cartelle</span>
+    <ul class="fai">
+      <li>Sulla pagina del repository premi <b>uploading an existing file</b></li>
+      <li>Nella cartella di Solvia seleziona <b>solo queste cinque cartelle</b>:
+          <code>public</code>, <code>lib</code>, <code>routes</code>,
+          <code>riservato</code>, <code>.github</code></li>
+      <li>Trascinale tutte insieme nel riquadro tratteggiato del browser</li>
+      <li>Aspetta che finisca (compare l'elenco dei file), poi in fondo premi
+          <span class="tasto">Commit changes</span></li>
+    </ul>
+
+    <span class="etichetta">Secondo carico — tutto il resto</span>
+    <ul class="fai">
+      <li>Sulla pagina del repository premi <span class="tasto">Add file</span> →
+          <span class="tasto">Upload files</span></li>
+      <li>Torna nella cartella di Solvia, seleziona <b>tutti i file rimasti</b>
+          (quelli sciolti, non le cartelle: <kbd>Ctrl+A</kbd> e poi deseleziona le cartelle
+          tenendo <kbd>Ctrl</kbd>)</li>
+      <li>Trascinali nel riquadro e premi <span class="tasto">Commit changes</span></li>
+    </ul>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Sulla pagina del repository vedi le cartelle <code>lib</code>, <code>public</code>,
+      <code>routes</code> e i file <code>package.json</code>, <code>server.js</code>,
+      <code>render.yaml</code>. Se c'è <code>render.yaml</code>, il passo dopo funzionerà.
+    </div>
+
+    <div class="box warn">
+      <b>Se GitHub dice "yowza, that's a lot of files"</b>
+      Ne hai trascinati più di 100 in una volta. Fai due mucchi più piccoli: prima
+      <code>public</code> e <code>lib</code>, poi il resto. L'ordine non conta.
+    </div>
+
+    <div class="box bad">
+      <b>Controlla che ci sia package-lock.json</b>
+      È un file che passa inosservato ma serve: senza, Render fallisce la costruzione.
+      Cercalo nell'elenco. Se manca, ricaricalo da solo con
+      <span class="tasto">Add file</span> → <span class="tasto">Upload files</span>.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">4</div>
+      <div class="passo-titolo">Fine — vai al passo 6</div>
+    </div>
+    <p style="margin-bottom:0">Il codice è su GitHub, che era tutto quello che serviva dal
+    computer. Da qui in poi si continua nel browser: salta a
+    <a href="#render"><b>Render</b></a>.</p>
+  </div>
+
+  <div class="box info">
+    <b>Se un domani vorrai modificare qualcosa</b>
+    Dalla pagina del file su GitHub c'è l'icona della matita: modifichi nel browser,
+    premi <i>Commit</i>, e Render ripubblica da solo in pochi minuti. Anche questo
+    senza installare niente.
+  </div>
+
+  <!-- ══════════════════════════ TABLET ══════════════════════════ -->
+  <h2 id="tablet">Strada verde — dal tablet Samsung</h2>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">1</div>
+      <div class="passo-titolo">Installa Termux</div>
+    </div>
+
+    <p>Termux è un'app che ti dà una riga nera dove scrivere comandi. Sembra difficile,
+    ma tu dovrai solo copiare e incollare quello che c'è scritto qui.</p>
+
+    <span class="etichetta">Cosa fai</span>
+    <ul class="fai">
+      <li>Apri Chrome sul tablet e vai su <code>f-droid.org/packages/com.termux</code></li>
+      <li>Premi <span class="tasto">Download APK</span> e aspetta che scarichi</li>
+      <li>Apri il file scaricato. Android dirà <i>"non puoi installare da questa fonte"</i>:
+          premi <span class="tasto">Impostazioni</span>, attiva l'interruttore, torna indietro
+          e premi <span class="tasto">Installa</span></li>
+    </ul>
+
+    <div class="box bad">
+      <b>NON scaricarlo dal Play Store</b>
+      Quella versione è ferma al 2022 e non funziona più. Deve venire da F-Droid.
+    </div>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Apri Termux e vedi uno sfondo nero con scritto qualcosa tipo <code>~ $</code> e un
+      cursore che lampeggia. Quella è la riga dove si scrive.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">2</div>
+      <div class="passo-titolo">Dai a Termux il permesso sui file</div>
+    </div>
+
+    <p>Serve perché Termux possa leggere <code>Solvia.zip</code> dalla cartella Download.</p>
+
+    <span class="etichetta">Scrivi in Termux (poi premi Invio)</span>
+    <pre><code>termux-setup-storage</code></pre>
+
+    <p>Android chiede il permesso: premi <span class="tasto">Consenti</span>.</p>
+
+    <div class="box info">
+      <b>Copiare e incollare in Termux</b>
+      Tieni premuto il dito sullo schermo nero: compare <span class="tasto">Paste</span>.
+      Così non devi digitare niente a mano.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">3</div>
+      <div class="passo-titolo">Metti lo zip in Download</div>
+    </div>
+
+    <ul class="fai">
+      <li>Torna nella chat dove ti ho mandato <code>Solvia.zip</code></li>
+      <li>Premi sul file e scaricalo</li>
+      <li>Finisce nella cartella <b>Download</b> del tablet. Lascialo lì, non aprirlo,
+          non estrarlo: fa tutto lo script</li>
+    </ul>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">4</div>
+      <div class="passo-titolo">Lancia l'installazione</div>
+    </div>
+
+    <p>Questi tre comandi installano tutto e fanno partire Solvia sul tablet. Scrivili
+    (o incollali) uno alla volta, premendo Invio dopo ognuno.</p>
+
+    <pre><code>cd /sdcard/Download
+unzip -o Solvia.zip
+bash */samsung.sh</code></pre>
+
+    <p>Il terzo comando ci mette <b>dieci-quindici minuti</b> la prima volta: sta scaricando
+    tutto quello che serve. Vedrai scorrere un sacco di scritte. È normale. Non chiudere
+    l'app e non spegnere lo schermo.</p>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Alla fine compare: <code>Apri il browser del tablet su: http://localhost:3000</code>.
+      Aprilo in Chrome e vedrai Solvia. <b>Funziona già</b> — solo che per ora gira dentro
+      il tuo tablet e lo vedi solo tu.
+    </div>
+
+    <div class="box warn">
+      <b>Se dice "unzip: command not found"</b>
+      Scrivi <code>pkg install unzip</code>, premi Invio, rispondi <code>y</code> se te lo
+      chiede, poi ridai i tre comandi da capo.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">5</div>
+      <div class="passo-titolo">Crea l'account GitHub e carica il codice</div>
+    </div>
+
+    <span class="etichetta">Prima, nel browser del tablet</span>
+    <ul class="fai">
+      <li>Vai su <code>github.com</code> e premi <span class="tasto">Sign up</span></li>
+      <li>Metti email, una password e un nome utente. <b>Scegline uno serio:</b> te lo porti
+          dietro per anni e lo vedranno anche altri</li>
+      <li>Conferma l'email che ti arriva</li>
+      <li>In alto a destra premi <span class="tasto">+</span> → <span class="tasto">New repository</span></li>
+      <li>Nome: scrivi <code>solvia</code>. <b>Non</b> spuntare "Add a README" né ".gitignore":
+          ci sono già dentro. Poi <span class="tasto">Create repository</span></li>
+      <li>Vai su <code>github.com/settings/tokens</code> →
+          <span class="tasto">Generate new token (classic)</span>, spunta la casella
+          <b>repo</b>, genera, e <b>copia il codice lungo</b> che appare</li>
+    </ul>
+
+    <div class="box bad">
+      <b>Quel codice lungo si vede una volta sola</b>
+      Copialo subito. Se chiudi la pagina senza copiarlo, devi rifarne uno nuovo.
+      E non incollarlo mai in una chat, nemmeno a me: è la chiave del tuo account.
+    </div>
+
+    <span class="etichetta">Poi, in Termux</span>
+    <pre><code>cd ~/solvia
+bash github.sh</code></pre>
+
+    <p>Ti chiede il nome utente e poi il codice lungo. Mentre incolli il codice
+    <b>non si vede niente</b>: è normale, sta andando. Premi Invio.</p>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Compare <code>Il codice è su: https://github.com/tuonome/solvia</code>. Apri quel
+      link nel browser: devi vedere tutti i file elencati.
+    </div>
+
+    <p style="margin-top:15px">Adesso salta al <a href="#render"><b>passo 6</b></a>: la parte
+    del tablet è finita.</p>
+  </div>
+
+  <!-- ══════════════════════════ IPHONE ══════════════════════════ -->
+  <h2 id="iphone">Strada blu — dall'iPhone</h2>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">1</div>
+      <div class="passo-titolo">Crea l'account GitHub</div>
+    </div>
+
+    <ul class="fai">
+      <li>Safari → <code>github.com</code> → <span class="tasto">Sign up</span></li>
+      <li>Email, password, nome utente (sceglilo serio)</li>
+      <li>Conferma l'email che ti arriva</li>
+      <li>In alto a destra <span class="tasto">+</span> → <span class="tasto">New repository</span></li>
+      <li>Nome: <code>solvia</code>. <b>Non</b> spuntare README né .gitignore.
+          <span class="tasto">Create repository</span></li>
+    </ul>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Vedi una pagina quasi vuota che dice <i>"Quick setup"</i> con un indirizzo tipo
+      <code>https://github.com/tuonome/solvia.git</code>.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">2</div>
+      <div class="passo-titolo">Scarica e scompatta lo zip</div>
+    </div>
+
+    <ul class="fai">
+      <li>Nella chat, premi su <code>Solvia.zip</code> e scaricalo</li>
+      <li>Apri l'app <b>File</b> → <b>Download</b></li>
+      <li>Premi una volta sullo zip: iOS crea da solo una cartella accanto ad esso</li>
+    </ul>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Accanto allo zip compare una cartella con dentro tanti file, fra cui
+      <code>package.json</code> e <code>server.js</code>.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">3</div>
+      <div class="passo-titolo">Installa Working Copy e carica il codice</div>
+    </div>
+
+    <p>Working Copy è l'app che sull'iPhone fa il lavoro che sul tablet fa Termux.
+    È gratis per quello che ti serve.</p>
+
+    <ul class="fai">
+      <li>App Store → cerca <b>Working Copy</b> → installa</li>
+      <li>Aprila, premi <span class="tasto">+</span> in alto a destra →
+          <span class="tasto">Clone repository</span></li>
+      <li>Collega il tuo account GitHub quando te lo chiede, e scegli <code>solvia</code></li>
+      <li>Torna nell'app <b>File</b>, apri la cartella scompattata,
+          <b>seleziona tutto</b> e copia</li>
+      <li>Rientra in Working Copy, apri <code>solvia</code> e incolla tutto dentro</li>
+      <li>Premi sul nome del repository → <span class="tasto">Commit</span>, scrivi
+          <code>primo caricamento</code>, conferma → poi <span class="tasto">Push</span></li>
+    </ul>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      Apri <code>github.com/tuonome/solvia</code> in Safari e vedi i file elencati.
+    </div>
+
+    <div class="box warn">
+      <b>Se il Push chiede una password</b>
+      GitHub non accetta più la password normale. Vai su
+      <code>github.com/settings/tokens</code> →
+      <span class="tasto">Generate new token (classic)</span>, spunta <b>repo</b>, copia il
+      codice lungo, e usa <b>quello</b> al posto della password.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ COMUNE ══════════════════════════ -->
+  <h2 id="render">Da qui in poi è uguale per tutti</h2>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">6</div>
+      <div class="passo-titolo">Render — questo pezzo con un genitore</div>
+    </div>
+
+    <p>Render è il servizio che terrà acceso il sito. Le sue condizioni chiedono che
+    l'intestatario sia maggiorenne: l'account lo apre uno dei tuoi, col suo nome.
+    Non è un ostacolo, è una firma.</p>
+
+    <div class="box info">
+      <b>Da fargli leggere prima</b>
+      Apri <b>PER-I-MIEI.html</b> (è nello zip) e daglielo. Cinque minuti, e c'è scritto
+      tutto: cos'è, cosa non è, quanto costa, cosa serve da loro.
+    </div>
+
+    <span class="etichetta">Cosa fate insieme</span>
+    <ul class="fai">
+      <li>Andate su <code>render.com</code> → <span class="tasto">Get Started</span></li>
+      <li>Scegliete <b>Continue with GitHub</b> e autorizzate l'accesso al tuo account</li>
+      <li>Dal pannello: <span class="tasto">New</span> → <span class="tasto">Blueprint</span></li>
+      <li>Nella lista scegliete il repository <code>solvia</code></li>
+      <li>Render legge da solo il file <code>render.yaml</code> e capisce tutto: non dovete
+          impostare né porte, né comandi, né altro</li>
+    </ul>
+
+    <div class="box warn">
+      <b>Se non trovi "Blueprint"</b>
+      Cerca la voce che parla di leggere la configurazione dal repository — a volte è
+      scritta come <i>Blueprints</i> o <i>Infrastructure as Code</i>. Se proprio non c'è,
+      scegli <span class="tasto">New Web Service</span> e seleziona lo stesso repository:
+      funziona uguale, solo che le variabili del passo 7 le metti a mano.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">7</div>
+      <div class="passo-titolo">Le quattro cose da scrivere</div>
+    </div>
+
+    <p>Render vi chiederà quattro valori (li chiama <i>environment variables</i>).
+    Sono l'unica cosa da compilare in tutto il procedimento.</p>
+
+    <pre><code>SOLVIA_TITOLARE       → nome e cognome del genitore
+SOLVIA_CONTATTO_EMAIL → un'email che leggete davvero
+SOLVIA_INDIRIZZO      → comune e provincia (es. Napoli, NA)
+SOLVIA_CONSOLE_PATH   → una parola inventata solo tua</code></pre>
+
+    <p>I primi tre finiscono nelle pagine legali del sito — privacy, cookie, termini —
+    che si riscrivono da sole a ogni pubblicazione. È un obbligo: senza, i visitatori
+    leggono <code>[Nome e Cognome]</code> nella tua informativa.</p>
+
+    <p>Il quarto è l'indirizzo <b>segreto</b> della tua console, quella dove vedi le
+    statistiche. Se scrivi <code>stanza-di-riccardo</code>, la tua console sarà su
+    <code>iltuosito.onrender.com/stanza-di-riccardo</code>. Sceglila lunga e strana:
+    chi non la conosce riceve una pagina "non trovato" identica a un indirizzo inventato.</p>
+
+    <p>Poi premete <span class="tasto">Apply</span> (o <span class="tasto">Create</span>).</p>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">8</div>
+      <div class="passo-titolo">La scelta del piano: gratis o 7 dollari</div>
+    </div>
+
+    <p>Questa è l'unica decisione vera, e va capita bene.</p>
+
+    <span class="etichetta">Piano Starter — circa 7 $ al mese</span>
+    <p>Il sito ha un disco che <b>tiene i dati</b>. Chi si registra oggi ritrova il suo
+    account il mese prossimo. È l'unico onesto se ci entrano persone vere.</p>
+
+    <span class="etichetta">Piano Free — 0 €</span>
+    <p>Nessun disco. Il sito funziona, ma <b>l'archivio si svuota da solo</b>: a ogni
+    riavvio, a ogni aggiornamento, e dopo qualche ora che nessuno lo apre. Chi si
+    registra oggi domani non trova più niente.</p>
+
+    <div class="box warn">
+      <b>Non è un difetto di Solvia</b>
+      È come funziona il piano gratuito di Render: non ammette dischi. Se scegli Free,
+      va benissimo per <i>far vedere</i> il progetto — ma allora scrivilo tu da qualche
+      parte che i dati si azzerano. Dire com'è vale sempre più che fingere.
+    </div>
+
+    <p style="margin-bottom:0">Nel pacchetto è impostato <b>Starter</b>. Per passare a Free:
+    dal pannello di Render cambiate <i>Instance Type</i>. Si cambia idea quando volete.</p>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">9</div>
+      <div class="passo-titolo">Aspetta, e guarda cosa succede</div>
+    </div>
+
+    <p>Render adesso costruisce il sito. Ci mette dai <b>3 ai 10 minuti</b>. Vedrai un
+    riquadro nero con centinaia di righe che scorrono: è normale, sta scaricando e
+    montando tutto.</p>
+
+    <span class="etichetta">Alla fine cerca queste due cose</span>
+    <ul class="fai">
+      <li>Una scritta verde <span class="tasto">Live</span> in alto</li>
+      <li>Nelle ultime righe, il <b>controllo prima del volo</b>: Solvia si controlla da
+          sola e scrive cosa manca ancora, in italiano</li>
+    </ul>
+
+    <div class="esito">
+      <b>È andata bene se…</b>
+      In alto compare un indirizzo tipo <code>solvia.onrender.com</code>. Premici sopra:
+      il sito si apre. <b>È online.</b> Da adesso lo può aprire chiunque nel mondo.
+    </div>
+
+    <div class="box info">
+      <b>La prima apertura è lenta</b>
+      Anche 30 secondi. Poi va veloce. Sul piano gratuito ridiventa lenta ogni volta che
+      il sito è rimasto fermo qualche ora.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">10</div>
+      <div class="passo-titolo">Registrati tu per primo — prima di dirlo a chiunque</div>
+    </div>
+
+    <p><b>Il primo account che si registra diventa l'amministratore</b>, cioè l'unico che
+    può entrare nella console. Quindi fallo adesso, prima di mandare il link a qualcuno.</p>
+
+    <ul class="fai">
+      <li>Apri il tuo sito</li>
+      <li>Premi <span class="tasto">Inizia gratis</span></li>
+      <li>Nome, email, password (almeno 8 caratteri, e <b>non la stessa di GitHub</b>)</li>
+      <li>Entrerai in una schermata di benvenuto in tre passi: scegli
+          <b>account con dati di esempio</b> per capire com'è fatto — li togli dopo con
+          un pulsante nelle Impostazioni</li>
+    </ul>
+
+    <div class="box warn">
+      <b>Se hai sbagliato indirizzo</b>
+      Non si rifà niente. Dal computer o da Termux:
+      <code>node amministratore.js tua@email.it</code> e quell'account diventa
+      amministratore.
+    </div>
+  </div>
+
+  <div class="passo">
+    <div class="passo-testa">
+      <div class="passo-n">11</div>
+      <div class="passo-titolo">Entra nella TUA console</div>
+    </div>
+
+    <p>Adesso la parte che hai costruito per te.</p>
+
+    <ul class="fai">
+      <li>Nel browser scrivi il tuo indirizzo seguito dalla parola segreta del passo 7:
+          <br><code>solvia.onrender.com/stanza-di-riccardo</code></li>
+      <li>Compare una pagina scura con un modulo di accesso, senza logo e senza nomi</li>
+      <li>Entra con la <b>stessa email e password</b> con cui ti sei registrato</li>
+    </ul>
+
+    <p>Dentro trovi: quante persone arrivano, da dove, quali pulsanti premono, quante
+    rispondono alla domanda sul prezzo e <b>quanto direbbero</b>, chi si registra e chi
+    si ferma a metà. Si aggiorna da sola ogni minuto.</p>
+
+    <div class="esito">
+      <b>Hai finito.</b>
+      Il sito è online, tu sei l'amministratore, e hai lo strumento per capire se
+      funziona. Il resto adesso non è più tecnico.
+    </div>
+  </div>
+
+  <!-- ══════════════════════════ GUASTI ══════════════════════════ -->
+  <h2>Se qualcosa va storto</h2>
+
+  <p>Non è un fallimento: succede a tutti, tutte le volte. Qui ci sono i sette intoppi
+  più comuni, con la soluzione.</p>
+
+  <details class="guasto">
+    <summary>Render dice "Build failed"</summary>
+    <p>Apri il riquadro nero e <b>scorri fino in fondo</b>: l'errore vero è nelle ultime
+    righe, non nelle prime. La causa più frequente è che il caricamento su GitHub è
+    incompleto — manca <code>package.json</code> o <code>package-lock.json</code>.</p>
+    <p>Controlla su <code>github.com/tuonome/solvia</code> che ci siano tutti i file. Se
+    ne mancano, ricarica e premi <span class="tasto">Manual Deploy</span> su Render.</p>
+  </details>
+
+  <details class="guasto">
+    <summary>Il sito si apre ma è tutto bianco</summary>
+    <p>Quasi sempre è la prima apertura ancora in corso: aspetta 30 secondi e ricarica.
+    Se resta bianco, su Render apri <b>Logs</b> e guarda le ultime righe: se c'è scritto
+    qualcosa in rosso, quella è la risposta.</p>
+  </details>
+
+  <details class="guasto">
+    <summary>Nella privacy c'è scritto "[Nome e Cognome]"</summary>
+    <p>Le tre variabili del passo 7 non sono state salvate, o il sito non è stato
+    ripubblicato dopo. Su Render: <b>Environment</b>, controlla che ci siano
+    <code>SOLVIA_TITOLARE</code>, <code>SOLVIA_CONTATTO_EMAIL</code> e
+    <code>SOLVIA_INDIRIZZO</code>, poi <span class="tasto">Manual Deploy</span>.
+    Le pagine si riscrivono da sole a ogni pubblicazione.</p>
+  </details>
+
+  <details class="guasto">
+    <summary>La console mi dà "pagina non trovata"</summary>
+    <p>Due possibilità. <b>Uno:</b> hai sbagliato la parola segreta — controllala su Render
+    alla voce <code>SOLVIA_CONSOLE_PATH</code>, e ricordati la barra:
+    <code>iltuosito.it/laparola</code>. <b>Due:</b> non sei entrato con l'account
+    amministratore. La console risponde "non trovato" e non "vietato" apposta: a chi non
+    ha diritto non deve nemmeno risultare che esista.</p>
+  </details>
+
+  <details class="guasto">
+    <summary>Mi sono registrato ma gli account spariscono</summary>
+    <p>Sei sul piano <b>Free</b> di Render, che non ha il disco: l'archivio si azzera da
+    solo. Non è rotto niente. Per tenerli davvero serve il piano Starter (passo 8).</p>
+  </details>
+
+  <details class="guasto">
+    <summary>Ho dimenticato la password e l'email di recupero non arriva</summary>
+    <p>Le email partono davvero solo se hai configurato un servizio di invio (SMTP), che
+    all'inizio non c'è: finiscono in un archivio interno invece che nella posta. Per ora
+    usa <code>node amministratore.js</code> da Termux per rimetterti a posto, e quando
+    puoi collega un servizio gratuito come Brevo (spiegato in <b>PUBBLICARE.md</b>).</p>
+  </details>
+
+  <details class="guasto">
+    <summary>Ho fatto una modifica ma sul sito non si vede</summary>
+    <p>Dopo ogni modifica il codice va rimandato su GitHub — da Termux:
+    <code>cd ~/solvia &amp;&amp; git add -A &amp;&amp; git commit -m "modifica" &amp;&amp; git push</code>.
+    Render se ne accorge da solo e ripubblica in pochi minuti. Se non parte, premi
+    <span class="tasto">Manual Deploy</span>.</p>
+  </details>
+
+  <div class="box info" style="margin-top:18px">
+    <b>Il comando che risponde da solo</b>
+    Da Termux, dentro <code>~/solvia</code>, scrivi <code>npm run controllo</code>: passa in
+    rassegna tutto quello che può rovinare una pubblicazione in silenzio e ti dice cosa
+    manca, in italiano, con l'istruzione per sistemarlo.
+  </div>
+
+  <!-- ══════════════════════════ DOPO ══════════════════════════ -->
+  <h2>E adesso?</h2>
+
+  <div class="passo">
+    <p>Adesso viene la parte che nessun programma può fare al posto tuo, ed è quella che
+    decide tutto: <b>far sapere a qualcuno che esiste</b>.</p>
+
+    <p>Non partire dagli sconosciuti. Parti da <b>tre persone che ti conoscono</b> e che
+    lavorano in proprio: il fotografo del matrimonio di tua cugina, il grafico che ha
+    fatto il logo a tuo zio, il tuo professore di informatica. Tre persone che ti
+    rispondono valgono trenta che ti ignorano.</p>
+
+    <p>E quando scrivi, dì la verità — che è già abbastanza forte:</p>
+
+    <div class="box info">
+      «Ciao, ho costruito una cosa. È un programma per chi lavora in proprio: preventivi,
+      fatture, solleciti. Non è in vendita e non voglio niente — vorrei solo che lo
+      provassi e mi dicessi se fa schifo.»
+    </div>
+
+    <p style="margin-bottom:0">I messaggi già scritti per Instagram, LinkedIn e i gruppi
+    Facebook, con il calendario di una settimana, stanno in <b>LANCIO.md</b>. E dopo tre
+    giorni apri la console: se arrivano visite ma nessuno risponde alla domanda sul
+    prezzo, il problema è il prodotto. Se non arriva nessuno, il problema sono i
+    messaggi. Sono due problemi diversi, e la console ti dice quale hai.</p>
+  </div>
+
+  <footer>
+    Se ti blocchi su un passo, scrivimi <b>a che numero sei</b> e <b>cosa vedi sullo
+    schermo</b>: con quelle due cose si risolve quasi sempre in un messaggio.
+  </footer>
+
+</div>
+</body>
+</html>
