@@ -19,7 +19,7 @@ services:
     # Passa a "starter" (circa 7 $/mese) e togli il commento alla sezione "disk"
     # in fondo a questo file: disco vero, niente sonnellini, niente trucchi.
     # Il piano si cambia anche dal pannello di Render, alla voce Instance Type.
-    plan: free
+    plan: starter
     # "build:pages" rigenera privacy, cookie e termini con i tuoi dati (le
     # variabili SOLVIA_TITOLARE e compagnia qui sotto): così le pagine legali
     # sono aggiornate a ogni deploy senza toccare il codice.
@@ -35,7 +35,7 @@ services:
       # progetto, che si azzera a ogni riavvio — ed è il salvataggio automatico a
       # rimetterli a posto. Passando a "starter" con il disco, rimetti /var/data.
       - key: SOLVIA_DATA_DIR
-        value: ./data
+        value: /var/data  
       # Progetto gratuito: nessun prezzo esposto, nessun piano da comprare,
       # nessun pagamento da incassare — e quindi nessun obbligo fiscale da
       # rispettare. Al posto del listino il sito mostra la domanda "quanto
@@ -93,7 +93,7 @@ services:
     # Disco persistente: tiene in vita il database fra una pubblicazione e
     # l'altra, e rende inutile il salvataggio su GitHub. Richiede plan: starter.
     # Per accenderlo: metti "starter" sopra e togli il cancelletto a queste righe.
-    # disk:
-    #   name: solvia-data
-    #   mountPath: /var/data
-    #   sizeGB: 1
+    disk:
+      name: solvia-data
+      mountPath: /var/data
+      sizeGB: 1
